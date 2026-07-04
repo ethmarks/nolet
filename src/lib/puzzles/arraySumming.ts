@@ -1,9 +1,9 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Level, TestResult } from ".";
+import type { Puzzle, TestResult } from ".";
 
 type InputType = number[];
 
-export class ArraySummingLevel implements Level {
+export class ArraySummingPuzzle implements Puzzle {
   public name: string = "Array Summing";
 
   private input: InputType = [1, 2, 3, 4, 5];
@@ -11,6 +11,8 @@ export class ArraySummingLevel implements Level {
   public inputString: string = `const input = ${JSON.stringify(this.input)};`;
 
   public initialCode: string = `
+// Edit me!
+
 function sum(numbers) {
   let total = 0;
   for (const num of numbers) {
@@ -20,6 +22,27 @@ function sum(numbers) {
 }
 
 return sum(input);
+`;
+
+  public descriptionHTML: string = `<p></p>`;
+
+  public solution: string = `
+// This is the best solution I could think of. It's terse,
+// simple, and performant. It's a bit boring though.
+function reduceSum(numbers) {
+  return numbers.reduce((acc, num) => acc + num, 0);
+}
+
+// This solution is worse than the .reduce() one in
+// every way, except it's way more interesting.
+function recursiveSum(numbers, index = 0) {
+  const num = numbers[index];
+
+  if (index === numbers.length - 1) return num;
+
+  const total = recursiveSum(numbers, index + 1);
+  return num + total;
+}
 `;
 
   private getAnswer(inpt: InputType): number {

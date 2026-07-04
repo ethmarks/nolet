@@ -3,7 +3,7 @@ export interface TestResult {
   msg: string;
 }
 
-export interface Level {
+export interface Puzzle {
   /**
    * The name of the level.
    *
@@ -23,7 +23,7 @@ export interface Level {
    * const input = [1, 2, 3, 4, 5];
    * ```
    */
-  inputString: string;
+  inputString?: string;
 
   /**
    * The string of JS to use as the initial value. It should pass the `test`
@@ -31,10 +31,30 @@ export interface Level {
    *
    * @example
    * ```js
-   * return input.reduce((acc, num) => acc + num, 0);
-   * ````
+   * let total = 0;
+   * for (const num of input) {
+   *   total += total;
+   * }
+   * return total;
+   * ```
    */
   initialCode: string;
+
+  /**
+   * The text that describes the level and provides suggestions. Remember to use <p> tags.
+   */
+  descriptionHTML: string;
+
+  /**
+   * The string of JS to display as a solution. It should pass the `test`
+   * function and the linting.
+   *
+   * @example
+   * ```js
+   * return input.reduce((acc, num) => acc + num, 0);
+   * ```
+   */
+  solution?: string;
 
   /**
    * A function that inputs the user's code and runs it against a suite of
@@ -44,6 +64,6 @@ export interface Level {
   test: (userCode: string) => TestResult;
 }
 
-import { ArraySummingLevel } from "./arraySumming";
+import { ArraySummingPuzzle } from "./arraySumming";
 
-export const LEVELS: Level[] = [new ArraySummingLevel()];
+export const PUZZLES: Puzzle[] = [new ArraySummingPuzzle()];

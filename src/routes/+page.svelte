@@ -3,17 +3,22 @@
     import Editor from "$lib/components/Editor.svelte";
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
 
-    import { LEVELS } from "$lib/levels";
+    import { PUZZLES } from "$lib/puzzles";
 
-    let levelNum: number = $state(0);
+    let puzzleNum: number = $state(0);
 
-    let level = $derived(LEVELS[levelNum]);
+    let puzzle = $derived(PUZZLES[puzzleNum]);
 
-    const stripNewlinePrefix = (str: string) =>
-        str[0] === "\n" ? str.substring(1) : str;
+    const stripNewlinePrefix = <T extends string | undefined>(str: T): T => {
+        if (typeof str === "undefined") return undefined as T;
 
-    let initialValue = $derived(stripNewlinePrefix(level.initialCode));
-    let inputString = $derived(level.inputString);
+        return (str[0] === "\n" ? str.substring(1) : str) as T;
+    };
+
+    let initialValue = $derived(stripNewlinePrefix(puzzle.initialCode));
+    let inputString = $derived(stripNewlinePrefix(puzzle.inputString));
+    let description = $derived(puzzle.descriptionHTML);
+    let solution = $derived(stripNewlinePrefix(puzzle.solution));
 
     let userCode: string = $state("");
 
@@ -21,15 +26,48 @@
 </script>
 
 <main>
-    <h2>{level.name}</h2>
+    <h2>{puzzle.name}</h2>
+
+    <div class="description">
+        {@html description}
+    </div>
+
     <h3>Tests</h3>
     <Output
         {userCode}
-        test={(code: string) => level.test(code)}
+        test={(code: string) => puzzle.test(code)}
         updateStatus={(s: OutputStatus) => (outputStatus = s)}
     />
-    <h3>Input</h3>
-    <CodeBlock value={inputString} />
+
+    {#if inputString}
+        <h3>Input</h3>
+        <CodeBlock value={inputString} />
+    {/if}
+
     <h3>Your Code</h3>
     <Editor {initialValue} onUpdate={(val: string) => (userCode = val)} />
+
+    {#if solution}
+        <details>
+            <summary>Click to show solution</summary>
+            <CodeBlock value={solution} />
+        </details>
+    {/if}
 </main>
+
+<style lang="scss">
+    :global(:root) {
+        --dc-width: 90ch;
+    }
+    details {
+        padding: 0 1rem;
+
+        summary {
+            margin-block: 0.7rem;
+        }
+
+        &[open] :global(:last-child) {
+            margin-bottom: 0.7rem;
+        }
+    }
+</style>

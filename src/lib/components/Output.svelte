@@ -1,7 +1,7 @@
 <script lang="ts">
     import { updated } from "$app/state";
     import { fpLint, type Violation } from "$lib/fpLint";
-    import type { TestResult } from "$lib/levels";
+    import type { TestResult } from "$lib/puzzles";
 
     export type OutputStatus = "not started" | "waiting" | "failed" | "passed";
 
