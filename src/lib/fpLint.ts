@@ -139,24 +139,44 @@ export function fpLint(userCode: string): Violation[] {
 }
 
 function demo() {
-  const snippet = `
-let x = 10;
-x = 6;
-const obj = { score: 3 };
-obj.score = 7;
-while (false) {
-  console.error("this will nevr run");
+  const printViols = (viols: Violation[]) => {
+    viols.forEach((v) => {
+      console.log(`Line ${v.lineNum}: ${v.name}. ${v.message}`);
+    });
+  };
+
+  const oop = `
+function oopSum(numbers) {
+  let total = 0;
+  for (const num of numbers) {
+    total += num;
+  }
+  return total;
 }
-const differentlongarrayname = [1, 2, 3];
-differentlongarrayname.push(4);
-var y = 5;
+
+oopSum(input);
   `;
 
-  const viols = fpLint(snippet);
+  const oopViols = fpLint(oop);
+  console.log(`\nOOP snippet: ${oopViols.length}`);
+  printViols(oopViols);
 
-  console.log(
-    viols.map((v) => `Line ${v.lineNum}: ${v.name}. ${v.message}`).join("\n"),
-  );
+  const fp = `
+function fpSum(numbers, index = 0) {
+  const num = numbers[index];
+
+  if (index === numbers.length - 1) return num;
+
+  const total = sum(numbers, index + 1);
+  return num + total;
+}
+
+fpSum(input);
+`;
+
+  const fpViols = fpLint(fp);
+  console.log(`\nFP snippet: ${fpViols.length}`);
+  printViols(fpViols);
 }
 
 // demo();
