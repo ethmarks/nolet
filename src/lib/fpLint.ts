@@ -15,6 +15,19 @@ class Viol implements Violation {
   ) {}
 }
 
+type Name = string;
+type Message = string;
+
+const DISALLOWED_METHOD_MESSAGES: Record<Name, Message> = {
+  push: "Declare a new array with the spread operator.",
+  pop: "Use `.slice(0, -1)` instead.",
+  shift: "Use destructuring instead.",
+  unshift: "Use the spread operator instead.",
+  splice: "Use `.toSpliced()` instead.",
+  sort: "Use `.toSorted()` instead.",
+  reverse: "Use `.toReversed()` instead.",
+};
+
 /**
  * Lints a string of JS code for violations of functional programming.
  */
@@ -120,24 +133,9 @@ export function fpLint(userCode: string): Violation[] {
 
       if (!propName) return;
 
-      if (propName === "push") {
-        v(
-          node,
-          "No `.push()`",
-          "Declare a new array with the spread operator.",
-        );
-      } else if (propName === "pop") {
-        v(node, "No `.pop()`", "Use `.slice(0, -1)` instead.");
-      } else if (propName === "shift") {
-        v(node, "No `.shift()`", "Use destructuring instead.");
-      } else if (propName === "unshift") {
-        v(node, "No `.unshift()`", "Use the spread operator instead.");
-      } else if (propName === "splice") {
-        v(node, "No `.splice()`", "Use `.toSpliced()` instead.");
-      } else if (propName === "sort") {
-        v(node, "No `.sort()`", "Use `.toSorted()` instead.");
-      } else if (propName === "reverse") {
-        v(node, "No `.reverse()`", "Use `.toReversed()` instead.");
+      const msg = DISALLOWED_METHOD_MESSAGES[propName];
+      if (msg) {
+        v(node, `No \`.${propName}()\``, msg);
       }
     },
   });
