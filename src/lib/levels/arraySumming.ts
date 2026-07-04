@@ -1,4 +1,4 @@
-import { runSnippet } from "$lib/runSnippet";
+import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Level, TestResult } from ".";
 
 type InputType = number[];
@@ -33,6 +33,20 @@ return sum(input);
       return {
         passed: false,
         msg: `Expected a value, but you didn't return anything. Remember to use \`return\` at the top level.`,
+      };
+    }
+
+    if (res instanceof QuickJSError) {
+      return {
+        passed: false,
+        msg: res.message,
+      };
+    }
+
+    if (Array.isArray(res)) {
+      return {
+        passed: false,
+        msg: `Expected a number but got an Array instead.`,
       };
     }
 

@@ -2,6 +2,10 @@ import { getQuickJS } from "quickjs-emscripten";
 
 const QuickJS = await getQuickJS();
 
+export class QuickJSError {
+  constructor(public message: string) {}
+}
+
 export function runSnippet(
   userCode: string,
   inputString: string,
@@ -9,9 +13,10 @@ export function runSnippet(
 ): unknown {
   const vm = QuickJS.newContext();
 
-  const world = vm.newString("world");
-  vm.setProp(vm.global, "NAME", world);
-  world.dispose();
+  // Remove non-deterministic functions from the global object.
+  vm.evalCode("delete Math.random;");
+  vm.evalCode("delete Date;");
+  vm.evalCode("delete performance;");
 
   const snippet = iife ? `(() => {\n${userCode}\n})();` : userCode;
 
@@ -23,15 +28,51 @@ ${snippet}
 
   const result = vm.evalCode(code);
 
-  let output;
+  const output = (() => {
+    if (result.error) {
+      const error = vm.dump(result.error);
+      result.error.dispose();
 
-  if (result.error) {
-    output = vm.dump(result.error);
-    result.error.dispose();
-  } else {
-    output = vm.dump(result.value);
-    result.value.dispose();
-  }
+      console.error(error);
+
+      if (typeof error.name === "string" && typeof error.message === "string") {
+        const errName = error.name as string;
+        const errMsg = error.message as string;
+
+        if (
+          (errName === "TypeError" && errMsg.includes("not a function")) ||
+          (errName === "ReferenceError" && errMsg.includes("is not defined"))
+        ) {
+          // The user might have tried to use one of the built-in functions that
+          // we removed.
+          if (code.includes("Math.random")) {
+            return new QuickJSError(
+              "It looks like you tried to use `Math.random()`. `Math.random()` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+            );
+          }
+          if (code.includes("Date")) {
+            return new QuickJSError(
+              "It looks like you tried to use `Date`. `Date` is unavailable because it can produce non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+            );
+          }
+          if (code.includes("performance")) {
+            return new QuickJSError(
+              "It looks like you tried to use `performance`. `performance` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+            );
+          }
+        }
+
+        return new QuickJSError(`${errName}: ${errMsg}`);
+      }
+
+      return new QuickJSError("Unknown error occured.");
+    } else {
+      const value = vm.dump(result.value);
+      result.value.dispose();
+
+      return value;
+    }
+  })();
 
   vm.dispose();
 
