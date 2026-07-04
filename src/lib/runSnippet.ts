@@ -6,7 +6,7 @@ export function runSnippet(
   userCode: string,
   inputString?: string,
   iife: boolean = true,
-): any {
+): unknown {
   const vm = QuickJS.newContext();
 
   const world = vm.newString("world");

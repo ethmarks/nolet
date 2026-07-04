@@ -23,7 +23,7 @@ export interface Level {
    * const input = [1, 2, 3, 4, 5];
    * ```
    */
-  input: string;
+  inputString: string;
 
   /**
    * The string of JS to use as the initial value. It should pass the `test`
@@ -43,3 +43,5 @@ export interface Level {
    */
   test: (userCode: string) => TestResult;
 }
+
+export { ArraySummingLevel } from "./arraySumming";
