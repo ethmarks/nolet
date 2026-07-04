@@ -32,3 +32,10 @@
 </header>
 
 {@render children()}
+
+<style>
+    :global(.editor-container) {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+</style>
