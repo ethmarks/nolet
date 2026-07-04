@@ -9,4 +9,26 @@
     <link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
+<header>
+    <h1>No Let</h1>
+    <nav>
+        <a href="https://ethmarks.github.io/nolet/"
+            ><img
+                src="https://img.shields.io/badge/demo-live-green"
+                alt="Demo"
+            /></a
+        >
+        <a href="https://github.com/ethmarks/nolet"
+            ><img
+                src="https://img.shields.io/badge/github-repo-blue?logo=github"
+                alt="GitHub"
+            /></a
+        >
+    </nav>
+    <p>
+        Can you write JavaScript code without using <code>let</code> or any mutable
+        state? Prove it.
+    </p>
+</header>
+
+<main>{@render children()}</main>
