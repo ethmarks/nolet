@@ -44,4 +44,6 @@ export interface Level {
   test: (userCode: string) => TestResult;
 }
 
-export { ArraySummingLevel } from "./arraySumming";
+import { ArraySummingLevel } from "./arraySumming";
+
+export const LEVELS: Level[] = [new ArraySummingLevel()];

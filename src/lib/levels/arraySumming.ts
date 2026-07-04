@@ -12,11 +12,11 @@ export class ArraySummingLevel implements Level {
 
   public initialCode: string = `
 function sum(numbers) {
-let total = 0;
-for (const num of numbers) {
-  total += num;
-}
-return total;
+  let total = 0;
+  for (const num of numbers) {
+    total += num;
+  }
+  return total;
 }
 
 sum(input);
