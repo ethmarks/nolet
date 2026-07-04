@@ -44,13 +44,16 @@ export function fpLint(userCode: string): Violation[] {
     name: string,
     msg?: string,
   ) => {
-    let loc: string | undefined;
+    let line: string | undefined;
 
     if (typeof node.loc !== "undefined" && node.loc !== null) {
-      loc = node.loc.start.line.toString();
+      // We add a newline before the user's code before parsing it as an IIFE.
+      // We have to offset the line numbers to compensate.
+      const lineNum = node.loc.start.line - 1;
+      line = lineNum.toString();
     }
 
-    violations.push(new Viol(name, msg, loc));
+    violations.push(new Viol(name, msg, line));
   };
 
   walk.simple(ast, {
