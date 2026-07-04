@@ -11,7 +11,8 @@
     const stripNewlinePrefix = (str: string) =>
         str[0] === "\n" ? str.substring(1) : str;
 
-    const initialValue = $derived(stripNewlinePrefix(level.initialCode));
+    let initialValue = $derived(stripNewlinePrefix(level.initialCode));
+    let inputString = $derived(level.inputString);
 
     let userCode: string = $state("");
 </script>
@@ -19,7 +20,7 @@
 <main>
     <h2>{level.name}</h2>
     <h3>Input</h3>
-    <CodeBlock value={level.inputString} />
+    <CodeBlock value={inputString} />
     <h3>Your Code</h3>
     <Editor {initialValue} onUpdate={(val: string) => (userCode = val)} />
 </main>

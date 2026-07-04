@@ -3,8 +3,6 @@
     import { readonlyEditor } from "prism-code-editor/setups";
     import "prism-code-editor/prism/languages/javascript";
 
-    import { onMount } from "svelte";
-
     interface Props {
         value: string;
     }
@@ -14,7 +12,8 @@
     let editorElement: HTMLDivElement;
     let editor: PrismEditor;
 
-    onMount(() => {
+    $effect(() => {
+        editor?.remove();
         editor = readonlyEditor(editorElement, {
             theme: "atom-one-dark",
             language: "js",

@@ -10,8 +10,6 @@
     import "prism-code-editor/autocomplete.css";
     import "prism-code-editor/autocomplete-icons.css";
 
-    import { onMount } from "svelte";
-
     interface Props {
         initialValue: string;
         onUpdate: (val: string) => void;
@@ -22,9 +20,9 @@
     let editorElement: HTMLDivElement;
     let editor: PrismEditor;
 
-    onMount(async () => {
+    async function create(value: string) {
         // These imports throw errors when rendered in SSR, so we import them
-        // lazily on mount.
+        // lazily
         const {
             strictFilter,
             autoComplete,
@@ -54,10 +52,11 @@
             },
         );
 
+        editor?.remove();
         editor = createEditor(editorElement, {
             language: "js",
             onUpdate,
-            value: initialValue,
+            value,
         });
 
         editor.addExtensions(
@@ -66,6 +65,11 @@
             searchWidget(),
             autoComplete({ filter: strictFilter }),
         );
+    }
+
+    $effect(() => {
+        // $effect must be synchronous, but the lazy imports are necessarily asynchronous. So we move them into an async and fire-and-forget it.
+        create(initialValue);
     });
 </script>
 
