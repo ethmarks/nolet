@@ -23,4 +23,6 @@
     });
 </script>
 
-<div bind:this={editorElement} class="editor-container"></div>
+<div bind:this={editorElement} class="editor-container">
+    <p>Loading code...</p>
+</div>
