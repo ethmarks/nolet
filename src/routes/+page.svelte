@@ -1,6 +1,7 @@
 <script lang="ts">
     import CodeBlock from "$lib/components/CodeBlock.svelte";
     import Editor from "$lib/components/Editor.svelte";
+    import Output from "$lib/components/Output.svelte";
 
     import { LEVELS } from "$lib/levels";
 
@@ -19,6 +20,7 @@
 
 <main>
     <h2>{level.name}</h2>
+    <Output {userCode} test={(code: string) => level.test(code)} />
     <h3>Input</h3>
     <CodeBlock value={inputString} />
     <h3>Your Code</h3>

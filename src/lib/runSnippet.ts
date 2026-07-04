@@ -4,7 +4,7 @@ const QuickJS = await getQuickJS();
 
 export function runSnippet(
   userCode: string,
-  inputString?: string,
+  inputString: string,
   iife: boolean = true,
 ): unknown {
   const vm = QuickJS.newContext();

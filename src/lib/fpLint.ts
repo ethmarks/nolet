@@ -21,8 +21,12 @@ class Viol implements Violation {
 export function fpLint(userCode: string): Violation[] {
   let ast: acorn.Program;
 
+  // The code will be run in an IIFE, so we also need to wrap it in one when
+  // parsing.
+  const code = `(() => {\n${userCode}\n})();`;
+
   try {
-    ast = acorn.parse(userCode, {
+    ast = acorn.parse(code, {
       ecmaVersion: 2022,
       sourceType: "script",
       locations: true,
