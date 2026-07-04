@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@intergrav/dev.css':
+        specifier: ^6.0.0
+        version: 6.0.0
       acorn:
         specifier: ^8.17.0
         version: 8.17.0
@@ -212,6 +215,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@intergrav/dev.css@6.0.0':
+    resolution: {integrity: sha512-Y50WcWCbS0llTVYx7wNGmXtKxZRyvsVZNYYhtYeJQbHYAhGfWmosslrlIdPDnadtbvyTPwhPG2N4080hq9HPTA==}
 
   '@jitl/quickjs-ffi-types@0.32.0':
     resolution: {integrity: sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg==}
@@ -797,6 +803,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.1':
     optional: true
+
+  '@intergrav/dev.css@6.0.0': {}
 
   '@jitl/quickjs-ffi-types@0.32.0': {}
 
