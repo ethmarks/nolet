@@ -29,10 +29,17 @@ return sum(input);
   public test(userCode: string): TestResult {
     const res = runSnippet(userCode, this.inputString);
 
+    if (typeof res === "undefined") {
+      return {
+        passed: false,
+        msg: `Expected a value, but you didn't return anything. Remember to use \`return\` at the top level.`,
+      };
+    }
+
     if (typeof res !== "number") {
       return {
         passed: false,
-        msg: `Expected answer to have type "number", but it had type "${typeof res}" instead.`,
+        msg: `Expected a number but got type "${typeof res}" instead.`,
       };
     }
 
@@ -40,13 +47,13 @@ return sum(input);
     if (res !== answer) {
       return {
         passed: false,
-        msg: `Expected answer to be "${answer}", but it was "${res}" instead.`,
+        msg: `Expected \`${answer}\` but got \`${res}\` instead.`,
       };
     }
 
     return {
       passed: true,
-      msg: "Test passed!",
+      msg: `Expected \`${answer}\` and got \`${res}\`.`,
     };
   }
 }
