@@ -19,7 +19,7 @@ function sum(numbers) {
   return total;
 }
 
-sum(input);
+return sum(input);
 `;
 
   private getAnswer(inpt: InputType): number {

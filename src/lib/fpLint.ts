@@ -154,7 +154,7 @@ function oopSum(numbers) {
   return total;
 }
 
-oopSum(input);
+return oopSum(input);
   `;
 
   const oopViols = fpLint(oop);
@@ -171,7 +171,7 @@ function fpSum(numbers, index = 0) {
   return num + total;
 }
 
-fpSum(input);
+return fpSum(input);
 `;
 
   const fpViols = fpLint(fp);

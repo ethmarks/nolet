@@ -31,4 +31,4 @@
     </p>
 </header>
 
-<main>{@render children()}</main>
+{@render children()}
