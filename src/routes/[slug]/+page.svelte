@@ -37,7 +37,10 @@
     let runLogic: (() => void) | undefined = $state(undefined);
     let runLint: (() => void) | undefined = $state(undefined);
 
+    let solutionOpen: boolean = $state(false);
+
     afterNavigate(() => {
+        solutionOpen = false;
         userCode = initialValue;
         runLogic?.();
         runLint?.();
@@ -83,7 +86,7 @@
     >
 
     {#if solution}
-        <details>
+        <details bind:open={solutionOpen}>
             <summary>Click to show solution</summary>
             <CodeBlock value={solution} />
         </details>
