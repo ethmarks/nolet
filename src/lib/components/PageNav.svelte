@@ -4,36 +4,43 @@
 
     let path = $derived(page.url.pathname);
 
-    let previous: { name: string; url: string } | undefined = $state();
-    let next: { name: string; url: string } | undefined = $state();
-
-    $effect(() => {
+    let {
+        previous,
+        next,
+    }: {
+        previous: { name: string; url: string } | undefined;
+        next: { name: string; url: string } | undefined;
+    } = $derived.by(() => {
         if (path === "/") {
-            previous = undefined;
             const firstPuzzle = PUZZLES[0];
-            next = { name: firstPuzzle.name, url: `/${firstPuzzle.slug}` };
+            return {
+                previous: undefined,
+                next: { name: firstPuzzle.name, url: `/${firstPuzzle.slug}` },
+            };
         } else {
             const slug = path.substring(1);
 
             const puzzleIndex = PUZZLES.findIndex((p) => p.slug === slug);
             const puzzleExists = puzzleIndex !== -1;
 
-            if (puzzleExists) {
-                previous =
+            if (!puzzleExists) return { previous: undefined, next: undefined };
+
+            return {
+                previous:
                     puzzleIndex === 0
                         ? { name: "Welcome", url: "/" }
                         : {
                               name: PUZZLES[puzzleIndex - 1].name,
                               url: `/${PUZZLES[puzzleIndex - 1].slug}`,
-                          };
-                next =
+                          },
+                next:
                     puzzleIndex === PUZZLES.length - 1
                         ? undefined
                         : {
                               name: PUZZLES[puzzleIndex + 1].name,
                               url: `/${PUZZLES[puzzleIndex + 1].slug}`,
-                          };
-            }
+                          },
+            };
         }
     });
 </script>
@@ -55,6 +62,7 @@
 
 <style lang="scss">
     div {
+        margin-bottom: 1rem;
         p {
             margin: 0;
         }
