@@ -1,6 +1,7 @@
 <script lang="ts">
     import favicon from "$lib/assets/favicon.svg";
     import { page } from "$app/state";
+    import { base } from "$app/paths";
     import { PUZZLES } from "$lib/puzzles";
     import "@intergrav/dev.css";
 
@@ -18,7 +19,7 @@
     </p>
     <nav>
         <ul>
-            <li><a href="/">Home</a></li>
+            <li><a href="{base}/">Home</a></li>
             <li><a href="https://github.com/ethmarks/nolet">Source</a></li>
         </ul>
     </nav>
@@ -32,7 +33,7 @@
                 {#each PUZZLES as puzzle}
                     <li>
                         <a
-                            href="/{puzzle.slug}"
+                            href="{base}/{puzzle.slug}"
                             class={page.url.pathname.substring(1) ===
                             puzzle.slug
                                 ? "current"

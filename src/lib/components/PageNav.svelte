@@ -1,8 +1,10 @@
 <script lang="ts">
     import { page } from "$app/state";
+    import { base } from "$app/paths";
+
     import { PUZZLES } from "$lib/puzzles";
 
-    let path = $derived(page.url.pathname);
+    let path = $derived(page.url.pathname.replace(base, ""));
 
     let {
         previous,
@@ -49,13 +51,13 @@
     {#if previous}
         <div class="previous">
             <p>Previous</p>
-            <a href={previous.url}>{previous.name}</a>
+            <a href="{base}{previous.url}">{previous.name}</a>
         </div>
     {/if}
     {#if next}
         <div class="next">
             <p>Next</p>
-            <a href={next.url}>{next.name}</a>
+            <a href="{base}{next.url}">{next.name}</a>
         </div>
     {/if}
 </nav>
