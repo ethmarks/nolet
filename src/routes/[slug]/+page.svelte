@@ -1,5 +1,10 @@
 <script lang="ts">
     import type { Puzzle } from "$lib/puzzles";
+    import CodeBlock from "$lib/components/CodeBlock.svelte";
+    import Editor from "$lib/components/Editor.svelte";
+    import Output, { type OutputStatus } from "$lib/components/Output.svelte";
+    import PageNav from "$lib/components/PageNav.svelte";
+    import { onMount } from "svelte";
 
     interface Props {
         data: {
@@ -10,11 +15,6 @@
     let { data }: Props = $props();
 
     let puzzle = $derived(data.puzzle);
-
-    import CodeBlock from "$lib/components/CodeBlock.svelte";
-    import Editor from "$lib/components/Editor.svelte";
-    import Output, { type OutputStatus } from "$lib/components/Output.svelte";
-    import PageNav from "$lib/components/PageNav.svelte";
 
     const stripNewlinePrefix = <T extends string | undefined>(str: T): T => {
         if (typeof str === "undefined") return undefined as T;
@@ -31,6 +31,14 @@
     let userCode: string = $state(initialValue);
 
     let outputStatus: OutputStatus = $state("not started");
+
+    let runLogic: (() => void) | undefined = $state(undefined);
+    let runLint: (() => void) | undefined = $state(undefined);
+
+    onMount(() => {
+        runLogic?.();
+        runLint?.();
+    });
 </script>
 
 <main>
@@ -41,19 +49,33 @@
     </div>
 
     <h3>Tests</h3>
+    <button
+        onclick={() => {
+            runLogic?.();
+            runLint?.();
+        }}>Run Tests</button
+    >
+
     <Output
         {userCode}
         test={(code: string) => puzzle.test(code)}
         updateStatus={(s: OutputStatus) => (outputStatus = s)}
+        registerRunLogic={(func: () => void) => (runLogic = func)}
+        registerRunLint={(func: () => void) => (runLint = func)}
     />
-
     {#if inputString}
         <h3>Input</h3>
         <CodeBlock value={inputString} />
     {/if}
 
     <h3>Your Code</h3>
-    <Editor {initialValue} onUpdate={(val: string) => (userCode = val)} />
+    <Editor
+        {initialValue}
+        onUpdate={(val: string) => {
+            userCode = val;
+            setTimeout(() => runLint?.(), 300);
+        }}
+    />
 
     {#if solution}
         <details>

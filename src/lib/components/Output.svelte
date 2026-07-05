@@ -10,20 +10,29 @@
         userCode: string;
         test: (userCode: string) => TestResult;
         updateStatus: (s: OutputStatus) => void;
+        registerRunLogic: (func: () => void) => void;
+        registerRunLint: (func: () => void) => void;
     }
 
-    let { userCode, test, updateStatus }: Props = $props();
+    let {
+        userCode,
+        test,
+        updateStatus,
+        registerRunLogic,
+        registerRunLint,
+    }: Props = $props();
 
-    function triggerRun() {
+    function runLogic() {
         logicRes = undefined;
-        viols = undefined;
-
         status = "waiting";
-
         logicRes = test(userCode);
+        status = lintPassed && logicPassed ? "passed" : "failed";
+    }
 
+    function runLint() {
+        viols = undefined;
+        status = "waiting";
         viols = fpLint(userCode);
-
         status = lintPassed && logicPassed ? "passed" : "failed";
     }
 
@@ -128,7 +137,8 @@
     });
 
     onMount(() => {
-        triggerRun();
+        registerRunLogic(() => runLogic());
+        registerRunLint(() => runLint());
     });
 </script>
 
@@ -152,8 +162,6 @@
     </ul>
     <blockquote>{outputMsg}</blockquote>
 </div>
-
-<button onclick={triggerRun}>Rerun Tests</button>
 
 <style lang="scss">
     ul {

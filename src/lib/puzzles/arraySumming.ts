@@ -12,8 +12,6 @@ export class ArraySummingPuzzle implements Puzzle {
   public inputString: string = `const input = ${JSON.stringify(this.input)};`;
 
   public initialCode: string = `
-// Edit me!
-
 function sum(numbers) {
   let total = 0;
   for (const num of numbers) {
