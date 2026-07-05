@@ -27,6 +27,7 @@
     "acorn": "^8.17.0",
     "acorn-walk": "^8.3.5",
     "prism-code-editor": "^5.2.0",
-    "quickjs-emscripten": "^0.32.0"
+    "quickjs-emscripten": "^0.32.0",
+    "striptags": "^3.2.0"
   }
 }

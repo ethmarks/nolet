@@ -2,6 +2,14 @@
     import PageNav from "$lib/components/PageNav.svelte";
 </script>
 
+<svelte:head>
+    <title>No Let</title>
+    <meta
+        name="description"
+        content="No Let is a series of JavaScript puzzles where you have to use pure functional programming, which means that you aren't allowed to use `let` or anything else with mutable state."
+    />
+</svelte:head>
+
 <main>
     <blockquote><strong>Welcome to No Let!</strong></blockquote>
 

@@ -5,6 +5,7 @@
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
     import PageNav from "$lib/components/PageNav.svelte";
     import { afterNavigate } from "$app/navigation";
+    import striptags from "striptags";
 
     interface Props {
         data: {
@@ -46,6 +47,11 @@
         runLint?.();
     });
 </script>
+
+<svelte:head>
+    <title>{puzzle.name} | No Let</title>
+    <meta name="description" content={striptags(description)} />
+</svelte:head>
 
 <main>
     <h2>{puzzle.name}</h2>

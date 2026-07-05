@@ -23,6 +23,9 @@ importers:
       quickjs-emscripten:
         specifier: ^0.32.0
         version: 0.32.0
+      striptags:
+        specifier: ^3.2.0
+        version: 3.2.0
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
@@ -627,6 +630,9 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  striptags@3.2.0:
+    resolution: {integrity: sha512-g45ZOGzHDMe2bdYMdIvdAfCQkCTDMGBazSw1ypMowwGIee7ZQ5dU0rBJ8Jqgl+jAKIv4dbeE1jscZq9wid1Tkw==}
+
   svelte-check@4.7.1:
     resolution: {integrity: sha512-FGUOmAqxXdN/H9Zm8slrqO7SLtFisXRB7rfOsHNJ3MLTD2po/+Stg8XyErkpumPHbuUiYTcqrEIzxpVWKTLqtg==}
     engines: {node: '>= 18.0.0'}
@@ -1165,6 +1171,8 @@ snapshots:
       totalist: 3.0.1
 
   source-map-js@1.2.1: {}
+
+  striptags@3.2.0: {}
 
   svelte-check@4.7.1(picomatch@4.0.5)(svelte@5.56.4)(typescript@6.0.3):
     dependencies:
