@@ -34,8 +34,9 @@
                     <li>
                         <a
                             href="{base}/{puzzle.slug}"
-                            class={page.url.pathname.substring(1) ===
-                            `${base}${puzzle.slug}`
+                            class={page.url.pathname.substring(
+                                base.length + 1,
+                            ) === puzzle.slug
                                 ? "current"
                                 : ""}>{puzzle.name}</a
                         >
