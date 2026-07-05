@@ -64,6 +64,7 @@ export interface Puzzle {
   test: (userCode: string) => TestResult;
 }
 
+import { AddOnePuzzle } from "./addOne";
 import { ArraySummingPuzzle } from "./arraySumming";
 
-export const PUZZLES: Puzzle[] = [new ArraySummingPuzzle()];
+export const PUZZLES: Puzzle[] = [new AddOnePuzzle(), new ArraySummingPuzzle()];
