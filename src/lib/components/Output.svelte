@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { updated } from "$app/state";
     import { fpLint, type Violation } from "$lib/fpLint";
     import type { TestResult } from "$lib/puzzles";
     import { onMount } from "svelte";
+    import { slide } from "svelte/transition";
 
     export type OutputStatus = "not started" | "waiting" | "failed" | "passed";
 
@@ -14,13 +14,13 @@
 
     let { userCode, test, updateStatus }: Props = $props();
 
-    async function triggerRun() {
-        testRes = undefined;
+    function triggerRun() {
+        logicRes = undefined;
         viols = undefined;
 
         status = "waiting";
 
-        testRes = test(userCode);
+        logicRes = test(userCode);
 
         viols = fpLint(userCode);
 
@@ -33,16 +33,16 @@
 
     let viols: Violation[] | undefined = $state();
 
-    let testRes: TestResult | undefined = $state();
+    let logicRes: TestResult | undefined = $state();
 
     let lintPassed: boolean = $derived(viols?.length === 0);
-    let logicPassed: boolean = $derived(testRes?.passed ?? false);
+    let logicPassed: boolean = $derived(logicRes?.passed ?? false);
 
     let status: OutputStatus = $state("waiting");
 
     let outputMsg: string = $derived.by(() => {
         if (status === "waiting") {
-            if (viols === undefined && testRes === undefined) {
+            if (viols === undefined && logicRes === undefined) {
                 return "Waiting on logic tests and linter...";
             } else if (viols === undefined) {
                 return "Waiting on linter...";
@@ -60,6 +60,69 @@
         }
     });
 
+    interface ResultElement {
+        id: string;
+        name: string;
+        class?: "pass" | "fail";
+        msg?: string;
+        lineNum?: string;
+    }
+
+    let logicResEl: ResultElement = $derived.by(() => {
+        if (typeof logicRes === "undefined") {
+            const el: ResultElement = {
+                id: "logic-wait",
+                name: "Waiting on logic tests...",
+            };
+            return el;
+        }
+
+        const passOrFail = logicPassed ? "pass" : "fail";
+
+        const el: ResultElement = {
+            id: `logic-${passOrFail}`,
+            name: `Logic test ${passOrFail}ed!`,
+            class: passOrFail,
+            msg: backtickToCode(logicRes.msg),
+        };
+
+        return el;
+    });
+
+    let lintResEls: ResultElement[] = $derived.by(() => {
+        if (typeof viols === "undefined") {
+            const el: ResultElement = {
+                id: "lint-wait",
+                name: "Waiting on linter...",
+            };
+            return [el];
+        }
+
+        if (lintPassed) {
+            const el: ResultElement = {
+                id: "lint-pass",
+                name: "Linting passed!",
+                class: "pass",
+                msg: "No disallowed constructs detected.",
+            };
+            return [el];
+        }
+
+        const els: ResultElement[] = viols.map((viol, index) => {
+            return {
+                id: `lint-${viol.name}-${viol.lineNum}-${index}`,
+                name: backtickToCode(viol.name),
+                class: "fail",
+                msg: backtickToCode(viol.message),
+                lineNum: viol.lineNum,
+            };
+        });
+
+        return els;
+    });
+
+    let resEls: ResultElement[] = $derived([logicResEl, ...lintResEls]);
+
     $effect(() => {
         updateStatus(status);
     });
@@ -71,49 +134,23 @@
 
 <div class="results">
     <ul>
-        {#if typeof testRes === "undefined"}
-            <li>Waiting on logic tests...</li>
-        {:else}
-            {#if logicPassed}
-                <li class="pass">
-                    <span class="name">Logic test passed!</span>
-                    <span class="msg">{@html backtickToCode(testRes.msg)}</span>
-                </li>
-            {:else}
-                <li class="fail">
-                    <span class="name">Logic test failed!</span>
-                    <span class="msg">{@html backtickToCode(testRes.msg)}</span>
-                </li>
-            {/if}
-        {/if}
-        {#if typeof viols == "undefined"}
-            <li>Waiting on linter...</li>
-        {:else}
-            {#if lintPassed}
-                <li class="pass">
-                    <span class="name">Linting passed!</span>
-                    <span class="msg"
-                        >No disallowed constructs detected. LGTM!</span
+        {#each resEls as resEl (resEl.id)}
+            <li transition:slide id="res-{resEl.id}" class={resEl.class}>
+                <span class="name">{@html resEl.name}</span>
+
+                {#if resEl.msg}
+                    <span class="msg">{@html resEl.msg}</span>
+                {/if}
+
+                {#if resEl.lineNum}
+                    <span class="line" title="Line {resEl.lineNum}"
+                        >(L{resEl.lineNum})</span
                     >
-                </li>
-            {:else}
-                {#each viols as viol}
-                    <li class="fail">
-                        <span class="name"
-                            >{@html backtickToCode(viol.name)}</span
-                        >
-                        <span class="msg">
-                            {@html backtickToCode(viol.message)}
-                        </span>
-                        <span class="line" title="Line {viol.lineNum}"
-                            >(L{viol.lineNum})</span
-                        >
-                    </li>
-                {/each}
-            {/if}
-        {/if}
+                {/if}
+            </li>
+        {/each}
     </ul>
-    <p>{outputMsg}</p>
+    <blockquote>{outputMsg}</blockquote>
 </div>
 
 <button onclick={triggerRun}>Rerun Tests</button>
@@ -121,7 +158,11 @@
 <style lang="scss">
     ul {
         margin: 0;
+        padding-inline: 2em;
+
         li {
+            list-style: none;
+
             .name {
                 font-weight: bold;
             }
@@ -130,11 +171,11 @@
                 font-size: 0.85em;
             }
 
-            &.fail::marker {
+            &.fail::before {
                 /* Red X looks kinda bad so I'm using red circle instead. */
                 content: "⭕";
             }
-            &.pass::marker {
+            &.pass::before {
                 content: "✅";
             }
             :first-child {
