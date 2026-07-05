@@ -73,5 +73,10 @@ export interface Puzzle {
 
 import { AddOnePuzzle } from "./addOne";
 import { ArraySummingPuzzle } from "./arraySumming";
+import { ScoreboardPuzzle } from "./scoreboard";
 
-export const PUZZLES: Puzzle[] = [new AddOnePuzzle(), new ArraySummingPuzzle()];
+export const PUZZLES: Puzzle[] = [
+  new AddOnePuzzle(),
+  new ArraySummingPuzzle(),
+  new ScoreboardPuzzle(),
+];
