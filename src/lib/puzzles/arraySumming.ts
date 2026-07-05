@@ -23,23 +23,28 @@ function sum(numbers) {
 return sum(input);
 `;
 
-  public descriptionHTML: string = `<p></p>`;
+  public descriptionHTML: string = `
+<p>Now you'll have to do some actual logic.</p>
+<p>You'll need to remove the <code>for</code> loop in the <code>sum</code> function in order to pass the linter tests. But if you remove the <code>for</code> loop, the function will break and the logic test will fail.</p>
+<p>To pass both tests at the same time, you'll have to get clever. There are quite a few ways to go about this, but I recommend either using recursion or <code>.reduce()</code>.</p>
+<p>Good luck!</p>
+`;
 
   public solution: string = `
 // This is the best solution I could think of. It's terse,
 // simple, and performant. It's a bit boring though.
-function reduceSum(numbers) {
+function sum(numbers) {
   return numbers.reduce((acc, num) => acc + num, 0);
 }
 
 // This solution is worse than the .reduce() one in
-// every way, except it's way more interesting.
-function recursiveSum(numbers, index = 0) {
+// almost every way, but it's more interesting.
+function sum(numbers, index = 0) {
   const num = numbers[index];
 
   if (index === numbers.length - 1) return num;
 
-  const total = recursiveSum(numbers, index + 1);
+  const total = sum(numbers, index + 1);
   return num + total;
 }
 `;

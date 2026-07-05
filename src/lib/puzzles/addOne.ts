@@ -26,7 +26,7 @@ return x;
 
   <p>You can also use your own solution if you want.</p>
 
-  <p>After you've updated the code, press "Rerun Tests", check if your solution passes all the tests, and then move onto the next puzzle.</p>
+  <p>After you've updated the code, press "Run", check if your solution passes all the tests, and then move onto the next puzzle.</p>
   `;
 
   private getAnswer(): number {
