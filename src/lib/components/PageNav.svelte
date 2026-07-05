@@ -4,7 +4,7 @@
 
     import { PUZZLES } from "$lib/puzzles";
 
-    let path = $derived(page.url.pathname.replace(base, ""));
+    let path = $derived(page.url.pathname.substring(base.length));
 
     let {
         previous,
