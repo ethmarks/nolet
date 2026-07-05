@@ -20,7 +20,8 @@
     let description = $derived(puzzle.descriptionHTML);
     let solution = $derived(stripNewlinePrefix(puzzle.solution));
 
-    let userCode: string = $state("");
+    // svelte-ignore state_referenced_locally
+    let userCode: string = $state(initialValue);
 
     let outputStatus: OutputStatus = $state("not started");
 </script>

@@ -2,6 +2,7 @@
     import { updated } from "$app/state";
     import { fpLint, type Violation } from "$lib/fpLint";
     import type { TestResult } from "$lib/puzzles";
+    import { onMount } from "svelte";
 
     export type OutputStatus = "not started" | "waiting" | "failed" | "passed";
 
@@ -37,12 +38,10 @@
     let lintPassed: boolean = $derived(viols?.length === 0);
     let logicPassed: boolean = $derived(testRes?.passed ?? false);
 
-    let status: OutputStatus = $state("not started");
+    let status: OutputStatus = $state("waiting");
 
     let outputMsg: string = $derived.by(() => {
-        if (status === "not started") {
-            return 'Press "Run" to start tests and check your code.';
-        } else if (status === "waiting") {
+        if (status === "waiting") {
             if (viols === undefined && testRes === undefined) {
                 return "Waiting on logic tests and linter...";
             } else if (viols === undefined) {
@@ -64,62 +63,60 @@
     $effect(() => {
         updateStatus(status);
     });
+
+    onMount(() => {
+        triggerRun();
+    });
 </script>
 
-<button onclick={triggerRun}>Run</button>
-
 <div class="results">
-    {#if status !== "not started"}
-        <ul>
-            {#if typeof testRes === "undefined"}
-                <li>Waiting on logic tests...</li>
+    <ul>
+        {#if typeof testRes === "undefined"}
+            <li>Waiting on logic tests...</li>
+        {:else}
+            {#if logicPassed}
+                <li class="pass">
+                    <span class="name">Logic test passed!</span>
+                    <span class="msg">{@html backtickToCode(testRes.msg)}</span>
+                </li>
             {:else}
-                {#if logicPassed}
-                    <li class="pass">
-                        <span class="name">Logic test passed!</span>
-                        <span class="msg"
-                            >{@html backtickToCode(testRes.msg)}</span
-                        >
-                    </li>
-                {:else}
+                <li class="fail">
+                    <span class="name">Logic test failed!</span>
+                    <span class="msg">{@html backtickToCode(testRes.msg)}</span>
+                </li>
+            {/if}
+        {/if}
+        {#if typeof viols == "undefined"}
+            <li>Waiting on linter...</li>
+        {:else}
+            {#if lintPassed}
+                <li class="pass">
+                    <span class="name">Linting passed!</span>
+                    <span class="msg"
+                        >No disallowed constructs detected. LGTM!</span
+                    >
+                </li>
+            {:else}
+                {#each viols as viol}
                     <li class="fail">
-                        <span class="name">Logic test failed!</span>
-                        <span class="msg"
-                            >{@html backtickToCode(testRes.msg)}</span
+                        <span class="name"
+                            >{@html backtickToCode(viol.name)}</span
+                        >
+                        <span class="msg">
+                            {@html backtickToCode(viol.message)}
+                        </span>
+                        <span class="line" title="Line {viol.lineNum}"
+                            >(L{viol.lineNum})</span
                         >
                     </li>
-                {/if}
+                {/each}
             {/if}
-            {#if typeof viols == "undefined"}
-                <li>Waiting on linter...</li>
-            {:else}
-                {#if lintPassed}
-                    <li class="pass">
-                        <span class="name">Linting passed!</span>
-                        <span class="msg"
-                            >No disallowed constructs detected. LGTM!</span
-                        >
-                    </li>
-                {:else}
-                    {#each viols as viol}
-                        <li class="fail">
-                            <span class="name"
-                                >{@html backtickToCode(viol.name)}</span
-                            >
-                            <span class="msg">
-                                {@html backtickToCode(viol.message)}
-                            </span>
-                            <span class="line" title="Line {viol.lineNum}"
-                                >(L{viol.lineNum})</span
-                            >
-                        </li>
-                    {/each}
-                {/if}
-            {/if}
-        </ul>
-    {/if}
+        {/if}
+    </ul>
     <p>{outputMsg}</p>
 </div>
+
+<button onclick={triggerRun}>Rerun Tests</button>
 
 <style lang="scss">
     ul {
