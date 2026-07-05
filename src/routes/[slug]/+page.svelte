@@ -4,7 +4,7 @@
     import Editor from "$lib/components/Editor.svelte";
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
     import PageNav from "$lib/components/PageNav.svelte";
-    import { onMount } from "svelte";
+    import { afterNavigate } from "$app/navigation";
 
     interface Props {
         data: {
@@ -13,6 +13,8 @@
     }
 
     let { data }: Props = $props();
+
+    const AUTO_RUN_LINT = false;
 
     let puzzle = $derived(data.puzzle);
 
@@ -35,7 +37,8 @@
     let runLogic: (() => void) | undefined = $state(undefined);
     let runLint: (() => void) | undefined = $state(undefined);
 
-    onMount(() => {
+    afterNavigate(() => {
+        userCode = initialValue;
         runLogic?.();
         runLint?.();
     });
@@ -48,13 +51,7 @@
         {@html description}
     </div>
 
-    <h3>Tests</h3>
-    <button
-        onclick={() => {
-            runLogic?.();
-            runLint?.();
-        }}>Run Tests</button
-    >
+    <hr />
 
     <Output
         {userCode}
@@ -63,19 +60,27 @@
         registerRunLogic={(func: () => void) => (runLogic = func)}
         registerRunLint={(func: () => void) => (runLint = func)}
     />
+
     {#if inputString}
-        <h3>Input</h3>
         <CodeBlock value={inputString} />
     {/if}
 
-    <h3>Your Code</h3>
     <Editor
         {initialValue}
         onUpdate={(val: string) => {
             userCode = val;
-            setTimeout(() => runLint?.(), 300);
+            if (AUTO_RUN_LINT) {
+                setTimeout(() => runLint?.(), 300);
+            }
         }}
     />
+
+    <button
+        onclick={() => {
+            runLogic?.();
+            runLint?.();
+        }}>Run</button
+    >
 
     {#if solution}
         <details>
@@ -91,6 +96,11 @@
     :global(:root) {
         --dc-width: 90ch;
     }
+
+    button {
+        width: 100%;
+    }
+
     details {
         padding: 0 1rem;
 
