@@ -89,7 +89,7 @@
         const passOrFail = logicPassed ? "pass" : "fail";
 
         const el: ResultElement = {
-            id: `logic-${passOrFail}`,
+            id: `logic-${passOrFail}-${logicRes.msg}`,
             name: `Logic test ${passOrFail}ed!`,
             class: passOrFail,
             msg: backtickToCode(logicRes.msg),
@@ -119,7 +119,7 @@
 
         const els: ResultElement[] = viols.map((viol, index) => {
             return {
-                id: `lint-${viol.name}-${viol.lineNum}-${index}`,
+                id: `lint-${viol.name}-${viol.message}-${viol.lineNum}-${index}`,
                 name: backtickToCode(viol.name),
                 class: "fail",
                 msg: backtickToCode(viol.message),
