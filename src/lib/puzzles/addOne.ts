@@ -16,7 +16,7 @@ return x;
 `;
 
   public descriptionHTML: string = `
-  <p>Because this puzzle is basically the tutorial, I'll walk you through how to edit the code to make the linter pass. </p>
+  <p>This puzzle is basically the tutorial. I'll walk you through how to edit the code to make the linter pass.</p>
   <p>In the editor below, edit the code like so:</p>
   <ul>
   <li><code>let x = 5;</code> -> <code>const x = 5;</code></li>

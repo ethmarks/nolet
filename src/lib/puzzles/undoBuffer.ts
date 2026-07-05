@@ -43,10 +43,13 @@ return parseBuffer(input);
 
   public solution: string = `
 function parseBuffer(buffer) {
-  return buffer.reduce(
-    (acc, char) => (char === "backspace" ? acc.slice(0, -1) : acc + char),
-    "",
-  );
+  return buffer.reduce((acc, char) => {
+    if (char === "backspace") {
+      return acc.slice(0, -1);
+    }
+
+    return acc + char;
+  }, "");
 }
 `;
 
