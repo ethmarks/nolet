@@ -12,6 +12,13 @@ export interface Puzzle {
   name: string;
 
   /**
+   * The slug of the level.
+   *
+   * @example sum
+   */
+  slug: string;
+
+  /**
    * The string of JS to inject in the VM that provides the inputs for the
    * player to process.
    *

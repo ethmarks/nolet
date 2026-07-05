@@ -1,74 +1,46 @@
-<script lang="ts">
-    import CodeBlock from "$lib/components/CodeBlock.svelte";
-    import Editor from "$lib/components/Editor.svelte";
-    import Output, { type OutputStatus } from "$lib/components/Output.svelte";
-
-    import { PUZZLES } from "$lib/puzzles";
-
-    let puzzleNum: number = $state(0);
-
-    let puzzle = $derived(PUZZLES[puzzleNum]);
-
-    const stripNewlinePrefix = <T extends string | undefined>(str: T): T => {
-        if (typeof str === "undefined") return undefined as T;
-
-        return (str[0] === "\n" ? str.substring(1) : str) as T;
-    };
-
-    let initialValue = $derived(stripNewlinePrefix(puzzle.initialCode));
-    let inputString = $derived(stripNewlinePrefix(puzzle.inputString));
-    let description = $derived(puzzle.descriptionHTML);
-    let solution = $derived(stripNewlinePrefix(puzzle.solution));
-
-    // svelte-ignore state_referenced_locally
-    let userCode: string = $state(initialValue);
-
-    let outputStatus: OutputStatus = $state("not started");
-</script>
-
 <main>
-    <h2>{puzzle.name}</h2>
+    <blockquote><strong>Welcome to No Let!</strong></blockquote>
 
-    <div class="description">
-        {@html description}
-    </div>
+    <h3>What is No Let?</h3>
+    <p>
+        No Let is a series of JavaScript puzzles where you have to use pure
+        functional programming, which means that you aren't allowed to use <code
+            >let</code
+        > or anything else with mutable state.
+    </p>
+    <p>To complete each puzzle, your code will need to pass two tests:</p>
+    <ul>
+        <li>
+            A linter that analyzes your code and checks if you're using mutable
+            state. If you try to declare a variable using <code>let</code>, the
+            linter will flag it and you will fail the test.
+        </li>
+        <li>
+            A logic test that ensures that your code outputs the correct answer.
+        </li>
+    </ul>
 
-    <h3>Tests</h3>
-    <Output
-        {userCode}
-        test={(code: string) => puzzle.test(code)}
-        updateStatus={(s: OutputStatus) => (outputStatus = s)}
-    />
-
-    {#if inputString}
-        <h3>Input</h3>
-        <CodeBlock value={inputString} />
-    {/if}
-
-    <h3>Your Code</h3>
-    <Editor {initialValue} onUpdate={(val: string) => (userCode = val)} />
-
-    {#if solution}
-        <details>
-            <summary>Click to show solution</summary>
-            <CodeBlock value={solution} />
-        </details>
-    {/if}
+    <h3>What is pure functional programming?</h3>
+    <p>
+        <a href="https://en.wikipedia.org/wiki/Functional_programming"
+            >Pure functional programming</a
+        >
+        is a programming paradigm where you aren't allowed to use mutable state. This
+        means that you can't reassign variables, which means that you can't increment
+        counters, which means that it's impossible to use
+        <code>for</code>
+        loops. For the same reasons, you're unable to use <code>while</code> loops,
+        and a few other things.
+    </p>
+    <p>
+        These extremely restrictive self-imposed limitations force you to do
+        things the functional programming way, which involves <a
+            href="https://en.wikipedia.org/wiki/Lambda_calculus"
+            >lambda calculus</a
+        >,
+        <a href="https://en.wikipedia.org/wiki/Functional_programming#Recursion"
+            >recursive functions</a
+        >, <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, and
+        more.
+    </p>
 </main>
-
-<style lang="scss">
-    :global(:root) {
-        --dc-width: 90ch;
-    }
-    details {
-        padding: 0 1rem;
-
-        summary {
-            margin-block: 0.7rem;
-        }
-
-        &[open] :global(:last-child) {
-            margin-bottom: 0.7rem;
-        }
-    }
-</style>
