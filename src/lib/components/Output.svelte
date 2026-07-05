@@ -60,11 +60,11 @@
             }
         } else {
             if (lintPassed && logicPassed) {
-                return "Your code outputs the correct answer and follows pure functional programming! Great job!";
+                return "Your code outputs the correct answer and conforms to pure functional programming! Great job!";
             } else if (lintPassed) {
-                return "Your code follows pure functional programming, but the logic is incorrect and it outputs the wrong answer.";
+                return "Your code conforms to pure functional programming, but its logic is incorrect and it outputs the wrong answer.";
             } else {
-                return "Your code's logic is correct, but it contains disallowed constructs and does not follow pure functional programming.";
+                return "Your code's logic is correct, but it does not conform to pure functional programming.";
             }
         }
     });
@@ -112,7 +112,7 @@
                 id: "lint-pass",
                 name: "Linting passed!",
                 class: "pass",
-                msg: "No disallowed constructs detected.",
+                msg: "No disallowed syntax detected.",
             };
             return [el];
         }
