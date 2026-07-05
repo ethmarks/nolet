@@ -16,9 +16,7 @@ return x;
 `;
 
   public descriptionHTML: string = `
-  <h3>Instructions</h3>
-  <p>Each puzzle gives you some code to start with. The starter code passes the logic test, but it fails the linting. Your job is to tweak the code to make it pass the linter without making it fail the logic test.</p>
-
+  <p>Because this puzzle is basically the tutorial, I'll walk you through how to edit the code to make the linter pass. </p>
   <p>In the editor below, edit the code like so:</p>
   <ul>
   <li><code>let x = 5;</code> -> <code>const x = 5;</code></li>
@@ -26,7 +24,9 @@ return x;
   <li><code>return x;</code> -> <code>return y;</code></li>
   </ul>
 
-  <p>Then press "Rerun Tests", ensure that your solution passes all the tests, and move onto the next puzzle.</p>
+  <p>You can also use your own solution if you want.</p>
+
+  <p>After you've updated the code, press "Rerun Tests", check if your solution passes all the tests, and then move onto the next puzzle.</p>
   `;
 
   private getAnswer(): number {

@@ -44,8 +44,19 @@
         >,
         <a href="https://en.wikipedia.org/wiki/Functional_programming#Recursion"
             >recursive functions</a
-        >, <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, and
-        more.
+        >, <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, etc.
+    </p>
+
+    <h3>Instructions</h3>
+    <p>
+        Each puzzle gives you some code to start with. The starter code will
+        pass the logic test correctly, but it will fail the linting. Your job is
+        to tweak the code to make it pass the linter without making it fail the
+        logic test.
+    </p>
+    <p>
+        Open the first puzzle by clicking the link below "Next" in the bottom
+        right corner.
     </p>
 
     <PageNav />
