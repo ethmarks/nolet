@@ -1,3 +1,7 @@
+<script>
+    import PageNav from "$lib/components/PageNav.svelte";
+</script>
+
 <main>
     <blockquote><strong>Welcome to No Let!</strong></blockquote>
 
@@ -43,4 +47,6 @@
         >, <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, and
         more.
     </p>
+
+    <PageNav />
 </main>

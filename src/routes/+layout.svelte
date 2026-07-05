@@ -1,5 +1,6 @@
 <script lang="ts">
     import favicon from "$lib/assets/favicon.svg";
+    import { page } from "$app/state";
     import { PUZZLES } from "$lib/puzzles";
     import "@intergrav/dev.css";
 
@@ -26,11 +27,21 @@
 <aside>
     <details open>
         <summary>Puzzles</summary>
-        <ol>
-            {#each PUZZLES as puzzle}
-                <li><a href="/{puzzle.slug}">{puzzle.name}</a></li>
-            {/each}
-        </ol>
+        <nav>
+            <ol>
+                {#each PUZZLES as puzzle}
+                    <li>
+                        <a
+                            href="/{puzzle.slug}"
+                            class={page.url.pathname.substring(1) ===
+                            puzzle.slug
+                                ? "current"
+                                : ""}>{puzzle.name}</a
+                        >
+                    </li>
+                {/each}
+            </ol>
+        </nav>
     </details>
 </aside>
 
@@ -43,8 +54,14 @@
         overflow: hidden;
     }
 
-    nav li:not(:first-child)::before {
+    header nav li:not(:first-child)::before {
         content: "•";
         margin: 0 0.25em;
+    }
+
+    aside nav {
+        .current {
+            font-weight: bold;
+        }
     }
 </style>

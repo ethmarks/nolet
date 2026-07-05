@@ -14,6 +14,7 @@
     import CodeBlock from "$lib/components/CodeBlock.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
+    import PageNav from "$lib/components/PageNav.svelte";
 
     const stripNewlinePrefix = <T extends string | undefined>(str: T): T => {
         if (typeof str === "undefined") return undefined as T;
@@ -60,6 +61,8 @@
             <CodeBlock value={solution} />
         </details>
     {/if}
+
+    <PageNav />
 </main>
 
 <style lang="scss">
