@@ -12,13 +12,6 @@ export interface Puzzle {
   name: string;
 
   /**
-   * The slug of the level.
-   *
-   * @example sum
-   */
-  slug: string;
-
-  /**
    * The string of JS to inject in the VM that provides the inputs for the
    * player to process.
    *
@@ -69,6 +62,10 @@ export interface Puzzle {
    * that the user didn't just hardcode the answer.
    */
   test: (userCode: string) => TestResult;
+}
+
+export function slugify(str: string): string {
+  return str.toLowerCase().replaceAll(" ", "_");
 }
 
 import { AddOnePuzzle } from "./addOne";

@@ -3,7 +3,6 @@ import type { Puzzle, TestResult } from ".";
 
 export class UndoBufferPuzzle implements Puzzle {
   public name: string = "Undo Buffer";
-  public slug = "undo";
 
   private replaceChars = "yhaksjdhjasug";
   private replaceCharIndex = 0;

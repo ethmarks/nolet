@@ -20,7 +20,6 @@ function isPlayers(value: unknown): value is Player[] {
 
 export class ScoreboardPuzzle implements Puzzle {
   public name: string = "Scoreboard";
-  public slug = "scoreboard";
 
   private players: Player[] = [
     { name: "Algernon", team: 1, score: 6 },

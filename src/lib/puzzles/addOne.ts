@@ -3,7 +3,6 @@ import type { Puzzle, TestResult } from ".";
 
 export class AddOnePuzzle implements Puzzle {
   public name: string = "Add One";
-  public slug = "add1";
 
   public initialCode: string = `
 // Edit me!

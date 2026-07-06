@@ -2,7 +2,7 @@
     import { page } from "$app/state";
     import { base } from "$app/paths";
 
-    import { PUZZLES } from "$lib/puzzles";
+    import { PUZZLES, slugify } from "$lib/puzzles";
 
     let path = $derived(page.url.pathname.substring(base.length));
 
@@ -17,18 +17,26 @@
             const firstPuzzle = PUZZLES[0];
             return {
                 previous: undefined,
-                next: { name: firstPuzzle.name, url: `/${firstPuzzle.slug}` },
+                next: {
+                    name: firstPuzzle.name,
+                    url: `/${slugify(firstPuzzle.name)}`,
+                },
             };
         } else if (path === "/congrats") {
             const lastPuzzle = PUZZLES[PUZZLES.length - 1];
             return {
-                previous: { name: lastPuzzle.name, url: `/${lastPuzzle.slug}` },
+                previous: {
+                    name: lastPuzzle.name,
+                    url: `/${slugify(lastPuzzle.name)}`,
+                },
                 next: undefined,
             };
         } else {
             const slug = path.substring(1);
 
-            const puzzleIndex = PUZZLES.findIndex((p) => p.slug === slug);
+            const puzzleIndex = PUZZLES.findIndex(
+                (p) => slugify(p.name) === slug,
+            );
             const puzzleExists = puzzleIndex !== -1;
 
             if (!puzzleExists) return { previous: undefined, next: undefined };
@@ -39,14 +47,14 @@
                         ? { name: "Welcome", url: "/" }
                         : {
                               name: PUZZLES[puzzleIndex - 1].name,
-                              url: `/${PUZZLES[puzzleIndex - 1].slug}`,
+                              url: `/${slugify(PUZZLES[puzzleIndex - 1].name)}`,
                           },
                 next:
                     puzzleIndex === PUZZLES.length - 1
                         ? { name: "Congrats!", url: "/congrats" }
                         : {
                               name: PUZZLES[puzzleIndex + 1].name,
-                              url: `/${PUZZLES[puzzleIndex + 1].slug}`,
+                              url: `/${slugify(PUZZLES[puzzleIndex + 1].name)}`,
                           },
             };
         }

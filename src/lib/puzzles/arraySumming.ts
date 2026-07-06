@@ -5,7 +5,6 @@ type InputType = number[];
 
 export class ArraySummingPuzzle implements Puzzle {
   public name: string = "Array Summing";
-  public slug = "sum";
 
   private input: InputType = [1, 2, 3, 4, 5];
 

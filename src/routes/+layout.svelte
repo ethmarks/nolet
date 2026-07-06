@@ -2,7 +2,7 @@
     import favicon from "$lib/assets/favicon.svg";
     import { page } from "$app/state";
     import { base } from "$app/paths";
-    import { PUZZLES } from "$lib/puzzles";
+    import { PUZZLES, slugify } from "$lib/puzzles";
     import "@intergrav/dev.css";
 
     let { children } = $props();
@@ -33,10 +33,10 @@
                 {#each PUZZLES as puzzle}
                     <li>
                         <a
-                            href="{base}/{puzzle.slug}"
+                            href="{base}/{slugify(puzzle.name)}"
                             class={page.url.pathname.substring(
                                 base.length + 1,
-                            ) === puzzle.slug
+                            ) === slugify(puzzle.name)
                                 ? "current"
                                 : ""}>{puzzle.name}</a
                         >
