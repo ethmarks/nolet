@@ -60,6 +60,12 @@ ${snippet}
               "It looks like you tried to use `performance`. `performance` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
             );
           }
+
+          if (code.includes("console")) {
+            return new QuickJSError(
+              "It looks like you tried to use `console`. `console` is unavailable in QuickJS. Try doing an early return instead and reading the error output.",
+            );
+          }
         }
 
         return new QuickJSError(`${errName}: ${errMsg}`);
