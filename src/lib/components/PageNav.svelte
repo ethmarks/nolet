@@ -19,6 +19,12 @@
                 previous: undefined,
                 next: { name: firstPuzzle.name, url: `/${firstPuzzle.slug}` },
             };
+        } else if (path === "/congrats") {
+            const lastPuzzle = PUZZLES[PUZZLES.length - 1];
+            return {
+                previous: { name: lastPuzzle.name, url: `/${lastPuzzle.slug}` },
+                next: undefined,
+            };
         } else {
             const slug = path.substring(1);
 
@@ -37,7 +43,7 @@
                           },
                 next:
                     puzzleIndex === PUZZLES.length - 1
-                        ? undefined
+                        ? { name: "Congrats!", url: "/congrats" }
                         : {
                               name: PUZZLES[puzzleIndex + 1].name,
                               url: `/${PUZZLES[puzzleIndex + 1].slug}`,

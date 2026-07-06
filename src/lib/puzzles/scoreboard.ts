@@ -151,9 +151,7 @@ function incrementScore(players, team) {
           msg: `Expected ${resPlayer.name} to have property \`score\`.`,
         };
       }
-      console.log(resPlayer.score !== answerPlayer.score);
       if (resPlayer.score !== answerPlayer.score) {
-        console.log("returned");
         return {
           passed: false,
           msg: `Expected ${resPlayer.name} to be have score ${answerPlayer.score}.`,
