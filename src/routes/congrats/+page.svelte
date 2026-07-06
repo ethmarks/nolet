@@ -1,5 +1,6 @@
 <script>
     import PageNav from "$lib/components/PageNav.svelte";
+    import { base } from "$app/paths";
 </script>
 
 <svelte:head>
@@ -42,7 +43,7 @@
                 title="xkcd 1312"
                 width="251"
                 height="321"
-                src="/xkcd1312.png"
+                src="{base}/xkcd1312.png"
                 alt="Code written in Haskell is guaranteed to have no side effects. ...Because no one will ever run it?"
             />
         </a>
