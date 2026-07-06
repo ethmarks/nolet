@@ -25,16 +25,9 @@
 
     <p>
         Well, in my personal opinion: no. Not really. It certainly has
-        advantages, but functional programming simply makes it much more
-        difficult to get things done.
-    </p>
-
-    <p>
-        For example, I didn't write the No Let codebase using pure functional
-        programming or anything like that. I declared dozens of <code>let</code> variables
-        and mutated state hundreds of times. Functional programming may not be all
-        that practical, but it's a very interesting paradigm and a lot of fun to write,
-        as I hope you'll agree.
+        advantages, but I don't think that they're numerous enough to outweigh
+        the fact that functional programming simply makes it more difficult to
+        get things done.
     </p>
 
     <figure>
@@ -52,6 +45,14 @@
             language where you can <em>only</em> use pure functional programming
         </figcaption>
     </figure>
+
+    <p>
+        I didn't even write the No Let codebase using pure functional
+        programming. I declared dozens of <code>let</code> variables and mutated state
+        hundreds of times. Functional programming may not be all that practical, but
+        it's a very interesting paradigm and a lot of fun to write, as I hope you'll
+        agree.
+    </p>
 
     <p>
         I really appreciate you playing through No Let to the end. I hope you
