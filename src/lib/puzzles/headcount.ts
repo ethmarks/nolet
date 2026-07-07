@@ -282,11 +282,11 @@ return getHeadcount(input);
   public descriptionHTML: string = `
 <p>The fire inspector is demanding to know if our office is under the fire safety occupancy limit. We're not entirely sure how many employees we have, so we need you to go count them. Here's our department structure as a deeply-nested data object.</p>
 <p>Good luck!</p>
+<p>Bonus: can you think of a valid solution that <em>doesn't</em> use recursion?</p>
 `;
 
   public solution: string = `
-// This solution is robust and proper,
-// but it does use recursion.
+// This is the best solution I could come up with.
 function getHeadcount(departments) {
   return departments.reduce((total, department) => {
     const currentCount = department.personnel.length;
@@ -297,8 +297,8 @@ function getHeadcount(departments) {
   }, 0);
 }
 
-// This solution avoids using .reduce(),
-// but it still uses recursion.
+// This solution is a bit more complicated, but it avoids
+// using .reduce().
 function getHeadcount(departments) {
   // departments will be empty in the final recursive
   // call because remainingDepartments will be empty.
@@ -316,7 +316,17 @@ function getHeadcount(departments) {
 
   return currentCount + subCount + remainingCount;
 }
+`;
 
+  /**
+   * This solution is fun, but it's *really* hacky and brittle to the point
+   * where I'm not sure that I want to endorse it as an acceptable solution.
+   *
+   * Also, the regex seems to be causing some issues with prism-code-editor.
+   * It's not rendering some of the characters or it's treating them as escaped
+   * or something like that.
+   */
+  private _regexSolution = `
 // This solution is not only hacky, brittle, and cursed,
 // but it's also slow. Its only advantage is that it
 // avoids the use of recursion.
