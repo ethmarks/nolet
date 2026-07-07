@@ -68,5 +68,7 @@
         right corner.
     </p>
 
-    <PageNav next={{ name: PUZZLES[0].name, slug: slugify(PUZZLES[0].name) }} />
+    <PageNav
+        next={{ name: PUZZLES[0].name, slug: "/" + slugify(PUZZLES[0].name) }}
+    />
 </main>

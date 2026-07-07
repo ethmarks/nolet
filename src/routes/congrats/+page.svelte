@@ -72,7 +72,7 @@
     <PageNav
         previous={{
             name: PUZZLES[PUZZLES.length - 1].name,
-            slug: slugify(PUZZLES[PUZZLES.length - 1].name),
+            slug: "/" + slugify(PUZZLES[PUZZLES.length - 1].name),
         }}
     />
 </main>

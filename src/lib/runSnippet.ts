@@ -76,6 +76,8 @@ ${snippet}
       const value = vm.dump(result.value);
       result.value.dispose();
 
+      console.log(value);
+
       return value;
     }
   })();
