@@ -118,6 +118,15 @@ export function fpLint(userCode: string): Violation[] {
         "Declare a new variable instead.",
       );
     },
+    UnaryExpression(node) {
+      if (node.operator === "delete") {
+        v(
+          node,
+          "No `delete`",
+          "Use object destructuring to extract properties instead.",
+        );
+      }
+    },
 
     // Array Mutators
     CallExpression(node) {
@@ -137,6 +146,14 @@ export function fpLint(userCode: string): Violation[] {
       if (msg) {
         v(node, `No \`.${propName}()\``, msg);
       }
+    },
+
+    // Classes
+    ClassDeclaration(node) {
+      v(node, "No classes", "Use functions or plain data structures instead.");
+    },
+    ThisExpression(node) {
+      v(node, "No `this`", "Pass arguments explicitly instead.");
     },
   });
 
