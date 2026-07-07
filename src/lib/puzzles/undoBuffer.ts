@@ -1,21 +1,26 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
-export class UndoBufferPuzzle implements Puzzle {
-  public name: string = "Undo Buffer";
+// The quote is from "Do Not Go Gentle into That Good Night" by Dylan Thomas
+function getBuffer(): string[] {
+  const replaceChars = "yhaksjdhjasug";
+  let replaceCharIndex = 0;
 
-  private replaceChars = "yhaksjdhjasug";
-  private replaceCharIndex = 0;
-
-  private getReplaceChar(): string {
-    const char = this.replaceChars[this.replaceCharIndex];
-    this.replaceCharIndex++;
+  function getReplaceChar(): string {
+    const char = replaceChars[replaceCharIndex];
+    replaceCharIndex++;
     return char;
   }
 
-  private input: string[] = "Doz not gzozz gentle inzto thazt gzood znightz"
+  return "Do# not g#o## gentle in#to tha#t g#ood #night#"
     .split("")
-    .flatMap((c) => (c === "z" ? [this.getReplaceChar(), "backspace"] : c));
+    .flatMap((c) => (c === "#" ? [getReplaceChar(), "backspace"] : c));
+}
+
+export class UndoBufferPuzzle implements Puzzle {
+  public name: string = "Undo Buffer";
+
+  private input: string[] = getBuffer();
 
   public inputString: string = `const input = ${JSON.stringify(this.input)};`;
 
