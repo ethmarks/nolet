@@ -1,4 +1,4 @@
-import { getQuickJS } from "quickjs-emscripten";
+import { getQuickJS, shouldInterruptAfterDeadline } from "quickjs-emscripten";
 
 const QuickJS = await getQuickJS();
 
@@ -26,6 +26,10 @@ ${inputString}
 ${snippet}
 `;
 
+  vm.runtime.setInterruptHandler(
+    shouldInterruptAfterDeadline(Date.now() + 1000),
+  );
+
   const result = vm.evalCode(code);
 
   const output = (() => {
@@ -35,43 +39,51 @@ ${snippet}
 
       console.error(error);
 
-      if (typeof error.name === "string" && typeof error.message === "string") {
-        const errName = error.name as string;
-        const errMsg = error.message as string;
-
-        if (
-          (errName === "TypeError" && errMsg.includes("not a function")) ||
-          (errName === "ReferenceError" && errMsg.includes("is not defined"))
-        ) {
-          // The user might have tried to use one of the built-in functions that
-          // we removed.
-          if (code.includes("Math.random")) {
-            return new QuickJSError(
-              "It looks like you tried to use `Math.random()`. `Math.random()` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
-            );
-          }
-          if (code.includes("Date")) {
-            return new QuickJSError(
-              "It looks like you tried to use `Date`. `Date` is unavailable because it can produce non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
-            );
-          }
-          if (code.includes("performance")) {
-            return new QuickJSError(
-              "It looks like you tried to use `performance`. `performance` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
-            );
-          }
-
-          if (code.includes("console")) {
-            return new QuickJSError(
-              "It looks like you tried to use `console`. `console` is unavailable in QuickJS. Try doing an early return instead and reading the error output.",
-            );
-          }
-        }
-
-        return new QuickJSError(`${errName}: ${errMsg}`);
+      if (!(
+        typeof error.name === "string" && typeof error.message === "string"
+      )) {
+        return new QuickJSError("Unknown error occured.");
       }
 
-      return new QuickJSError("Unknown error occured.");
+      const errName = error.name as string;
+      const errMsg = error.message as string;
+
+      if (errName === "InternalError" && errMsg.includes("interrupted")) {
+        return new QuickJSError(
+          "Your code took too long to execute, so it was terminated early to prevent crashing the page. You might have an infinite loop in your code, or maybe you're just using a very inefficient algorithm.",
+        );
+      }
+
+      if (
+        (errName === "TypeError" && errMsg.includes("not a function")) ||
+        (errName === "ReferenceError" && errMsg.includes("is not defined"))
+      ) {
+        // The user might have tried to use one of the built-in functions that
+        // we removed.
+        if (code.includes("Math.random")) {
+          return new QuickJSError(
+            "It looks like you tried to use `Math.random()`. `Math.random()` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+          );
+        }
+        if (code.includes("Date")) {
+          return new QuickJSError(
+            "It looks like you tried to use `Date`. `Date` is unavailable because it can produce non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+          );
+        }
+        if (code.includes("performance")) {
+          return new QuickJSError(
+            "It looks like you tried to use `performance`. `performance` is unavailable because it produces non-deterministic outputs, which are disallowed in pure functional programming. Find another way to approach the problem.",
+          );
+        }
+
+        if (code.includes("console")) {
+          return new QuickJSError(
+            "It looks like you tried to use `console`. `console` is unavailable in QuickJS. Try doing an early return instead and reading the error output.",
+          );
+        }
+      }
+
+      return new QuickJSError(`${errName}: ${errMsg}`);
     } else {
       const value = vm.dump(result.value);
       result.value.dispose();
