@@ -80,4 +80,4 @@ export const PUZZLES: Puzzle[] = [
   new ScoreboardPuzzle(),
   new UndoBufferPuzzle(),
   new HeadcountPuzzle(),
-];
+] as const;

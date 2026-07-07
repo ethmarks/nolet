@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Puzzle } from "$lib/puzzles";
+    import { PUZZLES, slugify, type Puzzle } from "$lib/puzzles";
     import CodeBlock from "$lib/components/CodeBlock.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
@@ -18,6 +18,7 @@
     const AUTO_RUN_LINT = false;
 
     let puzzle = $derived(data.puzzle);
+    let puzzleIndex = $derived(PUZZLES.indexOf(puzzle));
 
     const stripNewlinePrefix = <T extends string | undefined>(str: T): T => {
         if (typeof str === "undefined") return undefined as T;
@@ -39,6 +40,29 @@
     let runLint: (() => void) | undefined = $state(undefined);
 
     let solutionOpen: boolean = $state(false);
+
+    let previous = $derived(
+        puzzleIndex === 0
+            ? {
+                  name: "Welcome",
+                  slug: "/",
+              }
+            : {
+                  name: PUZZLES[puzzleIndex - 1].name,
+                  slug: slugify(PUZZLES[puzzleIndex - 1].name),
+              },
+    );
+    let next = $derived(
+        puzzleIndex === PUZZLES.length - 1
+            ? {
+                  name: "Congrats!",
+                  slug: "/congrats",
+              }
+            : {
+                  name: PUZZLES[puzzleIndex + 1].name,
+                  slug: slugify(PUZZLES[puzzleIndex + 1].name),
+              },
+    );
 
     afterNavigate(() => {
         solutionOpen = false;
@@ -98,7 +122,7 @@
         </details>
     {/if}
 
-    <PageNav />
+    <PageNav {previous} {next} />
 </main>
 
 <style lang="scss">

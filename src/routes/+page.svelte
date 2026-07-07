@@ -1,5 +1,6 @@
 <script>
     import PageNav from "$lib/components/PageNav.svelte";
+    import { PUZZLES, slugify } from "$lib/puzzles";
 </script>
 
 <svelte:head>
@@ -67,5 +68,5 @@
         right corner.
     </p>
 
-    <PageNav />
+    <PageNav next={{ name: PUZZLES[0].name, slug: slugify(PUZZLES[0].name) }} />
 </main>
