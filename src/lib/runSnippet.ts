@@ -30,9 +30,32 @@ ${snippet}
     shouldInterruptAfterDeadline(Date.now() + 1000),
   );
 
-  const result = vm.evalCode(code);
+  let result;
+
+  try {
+    result = vm.evalCode(code);
+  } catch (err) {
+    const errMsg =
+      err instanceof Error
+        ? err.message
+        : "Unknown error while executing code.";
+
+    console.error(errMsg);
+
+    if (errMsg.includes("too much recursion")) {
+      return new QuickJSError(
+        "Your code uses more recursion that the engine can execute. This probably means that you have an infinite loop.",
+      );
+    }
+
+    return new QuickJSError(errMsg);
+  }
 
   const output = (() => {
+    if (typeof result === "undefined") {
+      return new QuickJSError("Unknown error while executing code.");
+    }
+
     if (result.error) {
       const error = vm.dump(result.error);
       result.error.dispose();
@@ -42,7 +65,7 @@ ${snippet}
       if (!(
         typeof error.name === "string" && typeof error.message === "string"
       )) {
-        return new QuickJSError("Unknown error occured.");
+        return new QuickJSError("Unknown error while executing code.");
       }
 
       const errName = error.name as string;
