@@ -83,12 +83,16 @@
 </script>
 
 <div bind:this={editorElement} class="editor-container">
-    <p style:min-height="{height}px">Loading editor...</p>
+    <p style:min-height="{height}px">
+        Loading {readOnly ? "code block" : "editor"}...
+    </p>
 </div>
 
 <style lang="scss">
     p {
         margin: 0;
         line-height: 1em;
+        text-align: center;
+        background: var(--pce-bg, #292c33);
     }
 </style>
