@@ -20,7 +20,7 @@
 
     // To prevent CLS
     const WRAPPER_PADDING_PX = 8;
-    const FONT_SIZE_PX = 16;
+    const FONT_SIZE_PX = 22.4;
     let lineCount = $derived(initialValue.split(/\r\n|\r|\n/).length);
     let height = $derived(WRAPPER_PADDING_PX * 2 + FONT_SIZE_PX * lineCount);
 
