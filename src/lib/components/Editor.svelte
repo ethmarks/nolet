@@ -12,10 +12,17 @@
 
     interface Props {
         initialValue: string;
-        onUpdate: (val: string) => void;
+        readOnly: boolean;
+        onUpdate?: (val: string) => void;
     }
 
-    let { initialValue, onUpdate }: Props = $props();
+    let { initialValue, readOnly, onUpdate }: Props = $props();
+
+    // To prevent CLS
+    const WRAPPER_PADDING_PX = 8;
+    const FONT_SIZE_PX = 16;
+    let lineCount = $derived(initialValue.split(/\r\n|\r|\n/).length);
+    let height = $derived(WRAPPER_PADDING_PX * 2 + FONT_SIZE_PX * lineCount);
 
     let editorElement: HTMLDivElement;
     let editor: PrismEditor;
@@ -58,6 +65,7 @@
             language: "js",
             onUpdate,
             value,
+            readOnly,
         });
 
         editor.addExtensions(
@@ -75,5 +83,12 @@
 </script>
 
 <div bind:this={editorElement} class="editor-container">
-    <p>Loading editor...</p>
+    <p style:min-height="{height}px">Loading editor...</p>
 </div>
+
+<style lang="scss">
+    p {
+        margin: 0;
+        line-height: 1em;
+    }
+</style>

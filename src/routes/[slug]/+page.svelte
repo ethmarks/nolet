@@ -1,6 +1,5 @@
 <script lang="ts">
     import { PUZZLES, slugify, type Puzzle } from "$lib/puzzles";
-    import CodeBlock from "$lib/components/CodeBlock.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import Output, { type OutputStatus } from "$lib/components/Output.svelte";
     import PageNav from "$lib/components/PageNav.svelte";
@@ -95,7 +94,7 @@
     />
 
     {#if inputString}
-        <CodeBlock value={inputString} />
+        <Editor initialValue={inputString} readOnly={true} />
     {/if}
 
     <Editor
@@ -106,6 +105,7 @@
                 setTimeout(() => runLint?.(), 300);
             }
         }}
+        readOnly={false}
     />
 
     <button
@@ -118,7 +118,7 @@
     {#if solution}
         <details bind:open={solutionOpen}>
             <summary>Click to show solution</summary>
-            <CodeBlock value={solution} />
+            <Editor initialValue={solution} readOnly={true} />
         </details>
     {/if}
 
