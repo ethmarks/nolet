@@ -40,3 +40,12 @@ arr[p](item);
 ```
 
 Some of these exploits can be fixed with just a few more rules, but a lot of them would require a completely different approach to fix, and I doubt that I could *ever* fix 100% of them. I could theoretically switch the code language to a less "expressive" (i.e. exploitable) language than JavaScript, but that would come at the cost of making No Let much less accessible by using a less common language. I decided that it was preferable to just accept a good-enough solution.
+
+## Running Locally
+
+```sh
+git clone https://github.com/ethmarks/nolet.git
+cd nolet
+pnpm install
+pnpm dev
+```
