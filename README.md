@@ -14,7 +14,7 @@ Just visit <https://ethmarks.github.io/nolet/>.
 ## Features
 
 - **Custom Linter**: Uses [Acorn](https://github.com/acornjs/acorn) to parse the user's code into an AST and lint it for pure functional programming conformity.
-- **Sandboxed JS Execution**: Uses [QuickJS](github.com/justjake/quickjs-emscripten) to execute the user's code in a WASM VM context and read the result.
+- **Sandboxed JS Execution**: Uses [QuickJS](https://github.com/justjake/quickjs-emscripten) to execute the user's code in a WASM VM context and read the result.
 - **5 Puzzles**: Has 5 puzzles, each with a data input, some starter code, robust logic tests, and suggested solutions.
 - **High-performance Code Editor**: Uses [Prism code editor](https://prism-code-editor.netlify.app/) to provide code autocomplete and syntax highlighting with only 3.49kb (gzipped) of added bundle size.
 - **Error Handling**: Has robust error handling to ensure that the page doesn't crash from infinite loops or unchecked recursion while providing helpful error messages. Also removes non-deterministic builtins from the QuickJS VM like `Math.random` to enforce determinism.
@@ -49,3 +49,14 @@ cd nolet
 pnpm install
 pnpm dev
 ```
+
+## Acknowledgements
+
+- Thanks to [Fabrice Bellard](https://github.com/bellard) for making [QuickJS](https://github.com/bellard/quickjs) and to [Jake Teton-Landis](https://github.com/justjake) for [porting it to WASM](https://github.com/justjake/quickjs-emscripten).
+- Thanks to [Marijn Haverbeke](https://github.com/marijnh) for making [Acorn](https://github.com/acornjs/acorn).
+- Thanks to [Jonas Pytte](https://github.com/jonpyt) for making [Prism code editor](https://github.com/jonpyt/prism-code-editor).
+- Thanks to [Devin](https://tangled.org/devins.page) for making [dev.css](https://tangled.org/devins.page/dev.css).
+
+## License
+
+This project is under an MIT License. See [LICENSE](./LICENSE) for more information.
