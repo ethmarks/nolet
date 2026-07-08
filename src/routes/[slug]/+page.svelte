@@ -48,7 +48,7 @@
               }
             : {
                   name: PUZZLES[puzzleIndex - 1].name,
-                  slug: slugify(PUZZLES[puzzleIndex - 1].name),
+                  slug: "/" + slugify(PUZZLES[puzzleIndex - 1].name),
               },
     );
     let next = $derived(
