@@ -31,10 +31,25 @@ export class ScoreboardPuzzle implements Puzzle {
 	];
 	private scoringTeam: number = 1;
 
+	private secretPlayers: Player[] = [
+		{ name: "A", team: 1, score: 5 },
+		{ name: "B", team: 2, score: 4 },
+		{ name: "C", team: 2, score: 1 },
+		{ name: "D", team: 1, score: 2 },
+		{ name: "E", team: 2, score: 3 },
+		{ name: "F", team: 1, score: 3 },
+	];
+	private secretScoringTeam = 2;
+
 	public inputString: string = `const input = [
   ${this.players.map((p) => JSON.stringify(p)).join(",\n  ")}
 ];
 const scoringTeam = ${this.scoringTeam};`;
+
+	public secretInputString: string = `const input = [
+ ${this.secretPlayers.map((p) => JSON.stringify(p)).join(",\n  ")}
+];
+const scoringTeam = ${this.secretScoringTeam};`;
 
 	public initialCode: string = `
 function incrementScore(players, team) {
@@ -75,6 +90,49 @@ function incrementScore(players, team) {
 			});
 	}
 
+	private checkAnswer(res: unknown[], answer: Player[]): string | undefined {
+		if (res.length !== answer.length) {
+			return `Expected result to have length ${answer.length}, but got ${res.length}`;
+		}
+
+		for (let index = 0; index < answer.length; index++) {
+			const answerPlayer = answer[index];
+			const resPlayer = res[index];
+
+			if (resPlayer === null) {
+				return `Expected player with index ${index} to be an Object, but was null instead.`;
+			}
+
+			if (typeof resPlayer !== "object") {
+				return `Expected player with index ${index} to be an Object, but had type \`${typeof resPlayer}\` instead.`;
+			}
+
+			if (!("name" in resPlayer)) {
+				return `Expected player with index ${index} to have property \`name\`.`;
+			}
+			if (resPlayer.name !== answerPlayer.name) {
+				return `Expected player with index ${index} to be named ${answerPlayer.name}.`;
+			}
+
+			if (!("team" in resPlayer)) {
+				return `Expected ${resPlayer.name} to have property \`team\`.`;
+			}
+			if (resPlayer.team !== answerPlayer.team) {
+				return `Expected ${resPlayer.name} to be on team ${answerPlayer.team}.`;
+			}
+
+			if (!("score" in resPlayer)) {
+				return `Expected ${resPlayer.name} to have property \`score\`.`;
+			}
+			if (resPlayer.score !== answerPlayer.score) {
+				return `Expected ${resPlayer.name} to be have score ${answerPlayer.score}.`;
+			}
+		}
+
+		// only return undefined if everything passed
+		return undefined;
+	}
+
 	public test(userCode: string): TestResult {
 		const res = runSnippet(userCode, this.inputString);
 
@@ -100,62 +158,35 @@ function incrementScore(players, team) {
 		}
 
 		const answer = this.getAnswer(this.players, this.scoringTeam);
+		const answerMsg = this.checkAnswer(res, answer);
 
-		if (res.length !== answer.length) {
+		if (answerMsg !== undefined) {
 			return {
 				passed: false,
-				msg: `Expected result to have length ${answer.length}, but got ${res.length}`,
+				msg: answerMsg,
 			};
 		}
 
-		for (let index = 0; index < answer.length; index++) {
-			const answerPlayer = answer[index];
-			const resPlayer = res[index];
-			if (typeof resPlayer !== "object") {
-				return {
-					passed: false,
-					msg: `Expected player with index ${index} to be an Object, but had type \`${typeof resPlayer}\` instead.`,
-				};
-			}
+		const secretRes = runSnippet(userCode, this.secretInputString);
 
-			if (!("name" in resPlayer)) {
-				return {
-					passed: false,
-					msg: `Expected player with index ${index} to have property \`name\`.`,
-				};
-			}
-			if (resPlayer.name !== answerPlayer.name) {
-				return {
-					passed: false,
-					msg: `Expected player with index ${index} to be named ${answerPlayer.name}.`,
-				};
-			}
+		if (!Array.isArray(secretRes)) {
+			return {
+				passed: false,
+				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
+			};
+		}
 
-			if (!("team" in resPlayer)) {
-				return {
-					passed: false,
-					msg: `Expected ${resPlayer.name} to have property \`team\`.`,
-				};
-			}
-			if (resPlayer.team !== answerPlayer.team) {
-				return {
-					passed: false,
-					msg: `Expected ${resPlayer.name} to be on team ${answerPlayer.team}.`,
-				};
-			}
+		const secretAnswer = this.getAnswer(
+			this.secretPlayers,
+			this.secretScoringTeam,
+		);
+		const secretAnswerMsg = this.checkAnswer(secretRes, secretAnswer);
 
-			if (!("score" in resPlayer)) {
-				return {
-					passed: false,
-					msg: `Expected ${resPlayer.name} to have property \`score\`.`,
-				};
-			}
-			if (resPlayer.score !== answerPlayer.score) {
-				return {
-					passed: false,
-					msg: `Expected ${resPlayer.name} to be have score ${answerPlayer.score}.`,
-				};
-			}
+		if (secretAnswerMsg !== undefined) {
+			return {
+				passed: false,
+				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
+			};
 		}
 
 		return {
