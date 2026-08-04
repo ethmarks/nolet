@@ -2,9 +2,9 @@ import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
 export class AddOnePuzzle implements Puzzle {
-  public name: string = "Add One";
+	public name: string = "Add One";
 
-  public initialCode: string = `
+	public initialCode: string = `
 // Edit me!
 
 let x = 5;
@@ -14,7 +14,7 @@ x = x + 1;
 return x;
 `;
 
-  public descriptionHTML: string = `
+	public descriptionHTML: string = `
   <p>This puzzle is basically the tutorial. I'll walk you through how to edit the code to make the linter pass.</p>
   <p>In the editor below, edit the code like so:</p>
   <ul>
@@ -28,52 +28,52 @@ return x;
   <p>After you've updated the code, press "Run", check if your solution passes all the tests, and then move onto the next puzzle.</p>
   `;
 
-  private getAnswer(): number {
-    return 6;
-  }
+	private getAnswer(): number {
+		return 6;
+	}
 
-  public test(userCode: string): TestResult {
-    const res = runSnippet(userCode, "");
+	public test(userCode: string): TestResult {
+		const res = runSnippet(userCode, "");
 
-    if (typeof res === "undefined") {
-      return {
-        passed: false,
-        msg: `Expected a value, but you didn't return anything. Remember to use \`return\` at the top level.`,
-      };
-    }
+		if (typeof res === "undefined") {
+			return {
+				passed: false,
+				msg: `Expected a value, but you didn't return anything. Remember to use \`return\` at the top level.`,
+			};
+		}
 
-    if (res instanceof QuickJSError) {
-      return {
-        passed: false,
-        msg: res.message,
-      };
-    }
+		if (res instanceof QuickJSError) {
+			return {
+				passed: false,
+				msg: res.message,
+			};
+		}
 
-    if (Array.isArray(res)) {
-      return {
-        passed: false,
-        msg: `Expected a number but got an Array instead.`,
-      };
-    }
+		if (Array.isArray(res)) {
+			return {
+				passed: false,
+				msg: `Expected a number but got an Array instead.`,
+			};
+		}
 
-    if (typeof res !== "number") {
-      return {
-        passed: false,
-        msg: `Expected a number but got type "${typeof res}" instead.`,
-      };
-    }
+		if (typeof res !== "number") {
+			return {
+				passed: false,
+				msg: `Expected a number but got type "${typeof res}" instead.`,
+			};
+		}
 
-    const answer = this.getAnswer();
-    if (res !== answer) {
-      return {
-        passed: false,
-        msg: `Expected \`${answer}\` but got \`${res}\` instead.`,
-      };
-    }
+		const answer = this.getAnswer();
+		if (res !== answer) {
+			return {
+				passed: false,
+				msg: `Expected \`${answer}\` but got \`${res}\` instead.`,
+			};
+		}
 
-    return {
-      passed: true,
-      msg: `Expected \`${answer}\` and got \`${res}\`.`,
-    };
-  }
+		return {
+			passed: true,
+			msg: `Expected \`${answer}\` and got \`${res}\`.`,
+		};
+	}
 }

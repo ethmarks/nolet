@@ -2,172 +2,172 @@ import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 
 export interface Violation {
-  name: string;
-  message: string;
-  lineNum: string;
+	name: string;
+	message: string;
+	lineNum: string;
 }
 
 class Viol implements Violation {
-  constructor(
-    public name: string,
-    public message: string = "Unknown",
-    public lineNum: string = "?",
-  ) {}
+	constructor(
+		public name: string,
+		public message: string = "Unknown",
+		public lineNum: string = "?",
+	) {}
 }
 
 type Name = string;
 type Message = string;
 
 const DISALLOWED_METHOD_MESSAGES: Record<Name, Message> = {
-  push: "Declare a new array with the spread operator.",
-  pop: "Use `.slice(0, -1)` instead.",
-  shift: "Use destructuring instead.",
-  unshift: "Use the spread operator instead.",
-  splice: "Use `.toSpliced()` instead.",
-  sort: "Use `.toSorted()` instead.",
-  reverse: "Use `.toReversed()` instead.",
+	push: "Declare a new array with the spread operator.",
+	pop: "Use `.slice(0, -1)` instead.",
+	shift: "Use destructuring instead.",
+	unshift: "Use the spread operator instead.",
+	splice: "Use `.toSpliced()` instead.",
+	sort: "Use `.toSorted()` instead.",
+	reverse: "Use `.toReversed()` instead.",
 };
 
 /**
  * Lints a string of JS code for violations of functional programming.
  */
 export function fpLint(userCode: string): Violation[] {
-  let ast: acorn.Program;
+	let ast: acorn.Program;
 
-  // The code will be run in an IIFE, so we also need to wrap it in one when
-  // parsing.
-  const code = `(() => {\n${userCode}\n})();`;
+	// The code will be run in an IIFE, so we also need to wrap it in one when
+	// parsing.
+	const code = `(() => {\n${userCode}\n})();`;
 
-  try {
-    ast = acorn.parse(code, {
-      ecmaVersion: 2022,
-      sourceType: "script",
-      locations: true,
-    });
-  } catch (err) {
-    console.error(err instanceof Error ? err.message : "Unknown Syntax Error");
-    return [new Viol("Syntax Error")];
-  }
+	try {
+		ast = acorn.parse(code, {
+			ecmaVersion: 2022,
+			sourceType: "script",
+			locations: true,
+		});
+	} catch (err) {
+		console.error(err instanceof Error ? err.message : "Unknown Syntax Error");
+		return [new Viol("Syntax Error")];
+	}
 
-  let violations: Violation[] = [];
+	let violations: Violation[] = [];
 
-  // For terseness
-  const v = (
-    node: { loc?: acorn.SourceLocation | null },
-    name: string,
-    msg?: string,
-  ) => {
-    let line: string | undefined;
+	// For terseness
+	const v = (
+		node: { loc?: acorn.SourceLocation | null },
+		name: string,
+		msg?: string,
+	) => {
+		let line: string | undefined;
 
-    if (typeof node.loc !== "undefined" && node.loc !== null) {
-      // We add a newline before the user's code before parsing it as an IIFE.
-      // We have to offset the line numbers to compensate.
-      const lineNum = node.loc.start.line - 1;
-      line = lineNum.toString();
-    }
+		if (typeof node.loc !== "undefined" && node.loc !== null) {
+			// We add a newline before the user's code before parsing it as an IIFE.
+			// We have to offset the line numbers to compensate.
+			const lineNum = node.loc.start.line - 1;
+			line = lineNum.toString();
+		}
 
-    violations.push(new Viol(name, msg, line));
-  };
+		violations.push(new Viol(name, msg, line));
+	};
 
-  walk.simple(ast, {
-    // Variables
-    VariableDeclaration(node) {
-      if (node.kind === "let") {
-        v(node, "No `let`", "Use `const` instead.");
-      } else if (node.kind === "var") {
-        v(node, "No `var`", "Use `const` instead.");
-      }
-    },
+	walk.simple(ast, {
+		// Variables
+		VariableDeclaration(node) {
+			if (node.kind === "let") {
+				v(node, "No `let`", "Use `const` instead.");
+			} else if (node.kind === "var") {
+				v(node, "No `var`", "Use `const` instead.");
+			}
+		},
 
-    // Loops
-    ForStatement(node) {
-      v(node, "No `for`", "Use recursion or Array methods instead.");
-    },
-    WhileStatement(node) {
-      v(node, "No `while`", "Use recursion or Array methods instead.");
-    },
-    DoWhileStatement(node) {
-      v(node, "No `do-while`", "Use recursion or Array methods instead.");
-    },
-    ForInStatement(node) {
-      v(node, "No `for...in`", "Use recursion or Array methods instead.");
-    },
-    ForOfStatement(node) {
-      v(node, "No `for...of`", "Use recursion or Array methods instead.");
-    },
+		// Loops
+		ForStatement(node) {
+			v(node, "No `for`", "Use recursion or Array methods instead.");
+		},
+		WhileStatement(node) {
+			v(node, "No `while`", "Use recursion or Array methods instead.");
+		},
+		DoWhileStatement(node) {
+			v(node, "No `do-while`", "Use recursion or Array methods instead.");
+		},
+		ForInStatement(node) {
+			v(node, "No `for...in`", "Use recursion or Array methods instead.");
+		},
+		ForOfStatement(node) {
+			v(node, "No `for...of`", "Use recursion or Array methods instead.");
+		},
 
-    // Mutations
-    AssignmentExpression(node) {
-      if (node.left.type === "Identifier") {
-        v(node, "No variable reassignment", "Declare a new const instead.");
-      } else if (node.left.type === "MemberExpression") {
-        v(
-          node,
-          "No property mutation",
-          "Declare a new object with the spread operator.",
-        );
-      } else {
-        // Fallback
-        v(node, "No mutation", "Use immutable methods");
-      }
-    },
-    UpdateExpression(node) {
-      v(
-        node,
-        "No mutating variables with assignment operators",
-        "Declare a new variable instead.",
-      );
-    },
-    UnaryExpression(node) {
-      if (node.operator === "delete") {
-        v(
-          node,
-          "No `delete`",
-          "Use object destructuring to extract properties instead.",
-        );
-      }
-    },
+		// Mutations
+		AssignmentExpression(node) {
+			if (node.left.type === "Identifier") {
+				v(node, "No variable reassignment", "Declare a new const instead.");
+			} else if (node.left.type === "MemberExpression") {
+				v(
+					node,
+					"No property mutation",
+					"Declare a new object with the spread operator.",
+				);
+			} else {
+				// Fallback
+				v(node, "No mutation", "Use immutable methods");
+			}
+		},
+		UpdateExpression(node) {
+			v(
+				node,
+				"No mutating variables with assignment operators",
+				"Declare a new variable instead.",
+			);
+		},
+		UnaryExpression(node) {
+			if (node.operator === "delete") {
+				v(
+					node,
+					"No `delete`",
+					"Use object destructuring to extract properties instead.",
+				);
+			}
+		},
 
-    // Array Mutators
-    CallExpression(node) {
-      if (node.callee.type !== "MemberExpression") return;
+		// Array Mutators
+		CallExpression(node) {
+			if (node.callee.type !== "MemberExpression") return;
 
-      const property = node.callee.property;
-      const propName: string | undefined =
-        property.type === "Identifier"
-          ? property.name
-          : property.type === "Literal" && typeof property.value === "string"
-            ? property.value
-            : undefined;
+			const property = node.callee.property;
+			const propName: string | undefined =
+				property.type === "Identifier"
+					? property.name
+					: property.type === "Literal" && typeof property.value === "string"
+						? property.value
+						: undefined;
 
-      if (!propName) return;
+			if (!propName) return;
 
-      const msg = DISALLOWED_METHOD_MESSAGES[propName];
-      if (msg) {
-        v(node, `No \`.${propName}()\``, msg);
-      }
-    },
+			const msg = DISALLOWED_METHOD_MESSAGES[propName];
+			if (msg) {
+				v(node, `No \`.${propName}()\``, msg);
+			}
+		},
 
-    // Classes
-    ClassDeclaration(node) {
-      v(node, "No classes", "Use functions or plain data structures instead.");
-    },
-    ThisExpression(node) {
-      v(node, "No `this`", "Pass arguments explicitly instead.");
-    },
-  });
+		// Classes
+		ClassDeclaration(node) {
+			v(node, "No classes", "Use functions or plain data structures instead.");
+		},
+		ThisExpression(node) {
+			v(node, "No `this`", "Pass arguments explicitly instead.");
+		},
+	});
 
-  return violations;
+	return violations;
 }
 
 function demo() {
-  const printViols = (viols: Violation[]) => {
-    viols.forEach((v) => {
-      console.log(`Line ${v.lineNum}: ${v.name}. ${v.message}`);
-    });
-  };
+	const printViols = (viols: Violation[]) => {
+		viols.forEach((v) => {
+			console.log(`Line ${v.lineNum}: ${v.name}. ${v.message}`);
+		});
+	};
 
-  const oop = `
+	const oop = `
 function oopSum(numbers) {
   let total = 0;
   for (const num of numbers) {
@@ -179,11 +179,11 @@ function oopSum(numbers) {
 return oopSum(input);
   `;
 
-  const oopViols = fpLint(oop);
-  console.log(`\nOOP snippet: ${oopViols.length}`);
-  printViols(oopViols);
+	const oopViols = fpLint(oop);
+	console.log(`\nOOP snippet: ${oopViols.length}`);
+	printViols(oopViols);
 
-  const fp = `
+	const fp = `
 function fpSum(numbers, index = 0) {
   const num = numbers[index];
 
@@ -196,9 +196,9 @@ function fpSum(numbers, index = 0) {
 return fpSum(input);
 `;
 
-  const fpViols = fpLint(fp);
-  console.log(`\nFP snippet: ${fpViols.length}`);
-  printViols(fpViols);
+	const fpViols = fpLint(fp);
+	console.log(`\nFP snippet: ${fpViols.length}`);
+	printViols(fpViols);
 }
 
 // demo();
