@@ -237,10 +237,40 @@ function getDepartments(): Department[] {
 	];
 }
 
+function getSecretDepartments(): Department[] {
+	return [
+		{
+			name: "1",
+			personnel: ["a", "b", "c"],
+		},
+		{
+			name: "2",
+			personnel: ["d", "e"],
+			subdepartments: [
+				{
+					name: "3",
+					personnel: ["f", "g", "h", "i", "j"],
+				},
+				{
+					name: "4",
+					personnel: ["k"],
+					subdepartments: [
+						{
+							name: "5",
+							personnel: ["l"],
+						},
+					],
+				},
+			],
+		},
+	];
+}
+
 export class HeadcountPuzzle implements Puzzle {
 	public name: string = "Headcount";
 
 	private input: Department[] = getDepartments();
+	private secretInput: Department[] = getSecretDepartments();
 
 	public inputString: string = `
 // Here's the input data type, if it helps.
@@ -256,6 +286,8 @@ export class HeadcountPuzzle implements Puzzle {
 const input = [
   ${this.input.map((d) => JSON.stringify(d)).join(",\n  ")}
 ];`;
+
+	private secretInString = `const input = ${JSON.stringify(this.secretInput)};`;
 
 	public initialCode: string = `
 function getHeadcount(departments) {
@@ -395,6 +427,15 @@ function getHeadcount(departments) {
 			return {
 				passed: false,
 				msg: `Expected \`${answer}\` but got \`${res}\` instead.`,
+			};
+		}
+
+		const secretRes = runSnippet(userCode, this.secretInString);
+		const secretAnswer = this.getAnswer(this.secretInput);
+		if (secretRes !== secretAnswer) {
+			return {
+				passed: false,
+				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
 			};
 		}
 
