@@ -2,7 +2,7 @@ import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
 // The quote is from "Do Not Go Gentle into That Good Night" by Dylan Thomas
-function getBuffer(): string[] {
+function getBuffer(str: string): string[] {
 	const replaceChars = "yhaksjdhjasug";
 	let replaceCharIndex = 0;
 
@@ -12,7 +12,7 @@ function getBuffer(): string[] {
 		return char;
 	}
 
-	return "Do# not g#o## gentle in#to tha#t g#ood #night#"
+	return str
 		.split("")
 		.flatMap((c) => (c === "#" ? [getReplaceChar(), "backspace"] : c));
 }
@@ -20,9 +20,15 @@ function getBuffer(): string[] {
 export class UndoBufferPuzzle implements Puzzle {
 	public name: string = "Undo Buffer";
 
-	private input: string[] = getBuffer();
+	private input: string[] = getBuffer(
+		"Do# not g#o## gentle in#to tha#t g#ood #night#",
+	);
+	private secretInput = getBuffer(
+		"hel###lo, wo#r#ld! 1#2#3#45##6; e#than is the be##st!?",
+	);
 
 	public inputString: string = `const input = ${JSON.stringify(this.input)};`;
+	private secretInString = `const input = ${JSON.stringify(this.secretInput)};`;
 
 	public initialCode: string = `
 function parseBuffer(buffer) {
@@ -100,6 +106,15 @@ function parseBuffer(buffer) {
 			return {
 				passed: false,
 				msg: `Expected "${answer}" but got "${res}" instead.`,
+			};
+		}
+
+		const secretRes = runSnippet(userCode, this.secretInString);
+		const secretAnswer = this.getAnswer(this.secretInput);
+		if (secretRes !== secretAnswer) {
+			return {
+				passed: false,
+				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
 			};
 		}
 
