@@ -18,6 +18,7 @@
 		"@types/canvas-confetti": "^1.9.0",
 		"@types/node": "^26.1.0",
 		"canvas-confetti": "^1.9.4",
+		"sass": "^1.102.0",
 		"svelte": "^5.56.1",
 		"svelte-check": "^4.6.0",
 		"tsx": "^4.23.0",
