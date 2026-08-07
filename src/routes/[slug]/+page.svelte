@@ -5,6 +5,7 @@
 	import PageNav from "$lib/components/PageNav.svelte";
 	import { afterNavigate } from "$app/navigation";
 	import striptags from "striptags";
+	import confetti from "canvas-confetti";
 
 	interface Props {
 		data: {
@@ -69,6 +70,17 @@
 		runLogic?.();
 		runLint?.();
 	});
+
+	$effect(() => {
+		if (outputStatus === "passed") {
+			confetti({
+				particleCount: 150,
+				startVelocity: 55,
+				spread: 50,
+				origin: { y: 1 },
+			});
+		}
+	});
 </script>
 
 <svelte:head>
@@ -109,6 +121,7 @@
 	/>
 
 	<button
+		class={outputStatus === "passed" ? "pass" : ""}
 		onclick={() => {
 			runLogic?.();
 			runLint?.();
@@ -132,6 +145,15 @@
 
 	button {
 		width: 100%;
+		transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+		&.pass {
+			&,
+			&:focus,
+			&:enabled:hover {
+				background: #19b57b !important;
+			}
+		}
 	}
 
 	details {
