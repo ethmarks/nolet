@@ -7,8 +7,10 @@ export class ArraySummingPuzzle implements Puzzle {
 	public name: string = "Array Summing";
 
 	private input: InputType = [1, 2, 3, 4, 5];
+	private secretInput: InputType = [9, 1, 5, 1, 7, 3, 10];
 
 	public inputString: string = `const input = ${JSON.stringify(this.input)};`;
+	public secretInString: string = `const input = ${JSON.stringify(this.secretInput)};`;
 
 	public initialCode: string = `
 function sum(numbers) {
@@ -88,6 +90,15 @@ function sum(numbers, index = 0) {
 			return {
 				passed: false,
 				msg: `Expected \`${answer}\` but got \`${res}\` instead.`,
+			};
+		}
+
+		const secretRes = runSnippet(userCode, this.secretInString);
+		const secretAnswer = this.getAnswer(this.secretInput);
+		if (secretRes !== secretAnswer) {
+			return {
+				passed: false,
+				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
 			};
 		}
 

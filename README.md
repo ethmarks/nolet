@@ -71,6 +71,12 @@ I think that the granular error messages are more helpful, especially to users
 that are new to JavaScript and might not immediately recognize the difference
 between, for example, `6` and `"6"`.
 
+In addition to the input presented to the player, each level has a second secret
+input. If the user's code outputs the correct answer for the public input but
+not for the secret input, it's likely that the user tried to cheese the puzzle
+by hardcoding the answer rather than actually writing logic to process the
+input. The logic test will fail in this case.
+
 ### Linter
 
 After the user code is parsed into an AST with Acorn, the nodes are traversed
