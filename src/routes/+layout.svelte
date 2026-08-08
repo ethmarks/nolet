@@ -1,5 +1,5 @@
 <script lang="ts">
-	import favicon from "$lib/assets/favicon.svg";
+	import favicon from "$lib/assets/favicon.png";
 	import { page } from "$app/state";
 	import { base } from "$app/paths";
 	import { PUZZLES, slugify } from "$lib/puzzles";
