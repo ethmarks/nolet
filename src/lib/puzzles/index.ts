@@ -70,6 +70,7 @@ export function slugify(str: string): string {
 
 import { AddOnePuzzle } from "./addOne";
 import { ArraySummingPuzzle } from "./arraySumming";
+import { CaesarPuzzle } from "./caesar";
 import { HeadcountPuzzle } from "./headcount";
 import { ScoreboardPuzzle } from "./scoreboard";
 import { UndoBufferPuzzle } from "./undoBuffer";
@@ -78,6 +79,7 @@ export const PUZZLES: Puzzle[] = [
 	new AddOnePuzzle(),
 	new ArraySummingPuzzle(),
 	new ScoreboardPuzzle(),
+	new CaesarPuzzle(),
 	new UndoBufferPuzzle(),
 	new HeadcountPuzzle(),
 ] as const;
