@@ -46,6 +46,8 @@ following steps are executed in order:
 3. The linter is run. See [Linter](#linter) section for more information.
 4. The results of the logic test and linter are processed into human-readable
    list items and displayed in the UI.
+5. If the logic test _and_ the linter both pass, a burst of confetti is emitted
+   (yay!).
 
 ### Logic Tests
 
