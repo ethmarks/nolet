@@ -3,7 +3,7 @@
 	import { page } from "$app/state";
 	import { base } from "$app/paths";
 	import { PUZZLES, slugify } from "$lib/puzzles";
-	import "@intergrav/dev.css";
+	import "$lib/assets/dev.css";
 
 	let { children } = $props();
 </script>
