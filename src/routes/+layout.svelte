@@ -50,10 +50,23 @@
 {@render children()}
 
 <style lang="scss">
-	:global(.editor-container) {
-		margin-block: 1rem;
-		border-radius: 0.5rem;
-		overflow: hidden;
+	:global {
+		.editor-container {
+			margin-block: 1rem;
+			border-radius: 0.5rem;
+			overflow: hidden;
+
+			.prism-code-editor {
+				font-family:
+					Maple Mono,
+					Fira Code,
+					Fira Mono,
+					Menlo,
+					Consolas,
+					DejaVu Sans Mono,
+					monospace !important;
+			}
+		}
 	}
 
 	header nav li:not(:first-child)::before {
