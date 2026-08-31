@@ -1,49 +1,57 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
-// each string must be composed of either "#" or " ", and the length of the
-// strings must be uniform
-type ConwayGrid = string[];
+type Grid = boolean[][];
 
-function validateConwayGrid(value: string[]): value is ConwayGrid {
-	return value.every(
-		(row) =>
-			typeof row === "string" &&
-			row.split("").every((cell) => cell === "#" || cell === " "),
-	);
+function gridToString(input: Grid): string {
+	return input
+		.map((row: boolean[]) =>
+			row.reduce<string>((acc, cell) => (acc += (cell ? "#" : ".") + " "), ""),
+		)
+		.join("\n");
+}
+
+function stringToGrid(input: string): Grid {
+	return input
+		.split("\n")
+		.map((row: string) =>
+			row
+				.split("")
+				.filter((char) => char === "#" || char === ".")
+				.map((cell) => cell === "#"),
+		)
+		.filter((row: boolean[]) => row.length > 0);
 }
 
 export class ConwayPuzzle implements Puzzle {
 	public name: string = "Conway's Game of Life";
 
-	private input: ConwayGrid = [
-		"       ",
-		" ### # ",
-		" #     ",
-		"    ## ",
-		"  ## # ",
-		" # # # ",
-		"       ",
-	];
+	private input = `
+.......
+.###.#.
+.#.....
+....##.
+..##.#.
+.#.#.#.
+.......
+`;
 	private steps = 20;
-	private secretInput: ConwayGrid = [
-		"       ",
-		" ### # ",
-		" #     ",
-		"    ## ",
-		"  ## # ",
-		" # # # ",
-		"       ",
-	];
+	private secretInput = `
+.......
+.### #.
+.#.....
+....##.
+..## #.
+.#.#.#.
+.......
+`;
 	private secretSteps = 5;
 
 	public inputString: string = `
-const input = [
-	${this.input.map((row) => JSON.stringify(row)).join(",\n  ")}
-];
+const input = \`\n${gridToString(stringToGrid(this.input))}\n\`;
 const steps = ${this.steps};`;
 	private secretInString = `
-const input = ${JSON.stringify(this.secretInput)};
+const input = \`${this.secretInput}\`;
 const steps = ${this.secretSteps};`;
 
 	public initialCode: string = ``;
@@ -55,7 +63,7 @@ const steps = ${this.secretSteps};`;
 
 	public solution: string = ``;
 
-	private getAnswer(grid: ConwayGrid): ConwayGrid {
+	private getAnswer(grid: Grid): Grid {
 		return grid;
 	}
 
@@ -83,14 +91,7 @@ const steps = ${this.secretSteps};`;
 			};
 		}
 
-		if (!validateConwayGrid(res)) {
-			return {
-				passed: false,
-				msg: `Expected a `,
-			};
-		}
-
-		const answer = this.getAnswer(this.input);
+		const answer = this.getAnswer(stringToGrid(this.input));
 		if (res !== answer) {
 			return {
 				passed: false,
@@ -99,7 +100,7 @@ const steps = ${this.secretSteps};`;
 		}
 
 		const secretRes = runSnippet(userCode, this.secretInString);
-		const secretAnswer = this.getAnswer(this.secretInput);
+		const secretAnswer = this.getAnswer(stringToGrid(this.secretInput));
 		if (secretRes !== secretAnswer) {
 			return {
 				passed: false,
