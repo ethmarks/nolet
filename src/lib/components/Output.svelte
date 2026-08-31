@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fpLint, type Violation } from "$lib/fpLint";
 	import type { TestResult } from "$lib/puzzles";
-	import { onMount } from "svelte";
+	import { onMount, untrack } from "svelte";
 	import { slide } from "svelte/transition";
 
 	export type OutputStatus = "not started" | "waiting" | "failed" | "passed";
@@ -61,10 +61,13 @@
 		} else {
 			if (lintPassed && logicPassed) {
 				return "Your code outputs the correct answer and conforms to pure functional programming! Great job!";
-			} else if (lintPassed) {
-				return "Your code conforms to pure functional programming, but its logic is incorrect and it outputs the wrong answer.";
-			} else {
+			} else if (logicPassed) {
 				return "Your code's logic is correct, but it does not conform to pure functional programming.";
+			}
+			if (untrack(() => userCode).trim() === "") {
+				return "Your code is empty, silly!";
+			} else {
+				return "Your code conforms to pure functional programming, but its logic is incorrect and it outputs the wrong answer.";
 			}
 		}
 	});
