@@ -39,7 +39,7 @@ export class ConwayPuzzle implements Puzzle {
 
 	public inputString: string = `
 const input = [
-${this.input.map((row) => JSON.stringify(row)).join(",\n  ")}
+	${this.input.map((row) => JSON.stringify(row)).join(",\n  ")}
 ];
 const steps = ${this.steps};`;
 	private secretInString = `
@@ -48,7 +48,10 @@ const steps = ${this.secretSteps};`;
 
 	public initialCode: string = ``;
 
-	public descriptionHTML: string = ``;
+	public descriptionHTML: string = `
+<p>A friend who you do <em>not</em> want to take hang gliding just overheard you discussing your upcoming hang gliding trip. Thinking quickly, you said that you were actually talking about <a href="https://en.wikipedia.org/wiki/Glider_(Conway%27s_Game_of_Life)">glider patterns</a> in your implementation of Conway's Game of Life. To avoid getting caught in your lie, you now have to quickly make a Game of Life implementation.</p>
+<p>Good luck!</p>
+`;
 
 	public solution: string = ``;
 
