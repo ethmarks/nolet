@@ -1,12 +1,23 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
-type Grid = boolean[][];
+type Cell = "alive" | "dead";
+type Grid = Cell[][];
+
+// prettier-ignore
+const MOORE_NEIGHBORHOOD = [
+	[-1, -1], [0, -1], [1, -1],
+	[-1, 0],           [1, 0],
+	[-1, 1],  [0, 1],  [1, 1],
+];
 
 function gridToString(input: Grid): string {
 	return input
-		.map((row: boolean[]) =>
-			row.reduce<string>((acc, cell) => (acc += (cell ? "#" : ".") + " "), ""),
+		.map((row) =>
+			row.reduce<string>(
+				(acc, cell) => (acc += (cell === "alive" ? "#" : ".") + " "),
+				"",
+			),
 		)
 		.join("\n");
 }
@@ -18,9 +29,9 @@ function stringToGrid(input: string): Grid {
 			row
 				.split("")
 				.filter((char) => char === "#" || char === ".")
-				.map((cell) => cell === "#"),
+				.map((cell) => (cell === "#" ? "alive" : "dead")),
 		)
-		.filter((row: boolean[]) => row.length > 0);
+		.filter((row) => row.length > 0);
 }
 
 export class ConwayPuzzle implements Puzzle {
@@ -38,7 +49,7 @@ export class ConwayPuzzle implements Puzzle {
 	private steps = 20;
 	private secretInput = `
 .......
-.### #.
+.###.#.
 .#.....
 ....##.
 ..## #.
@@ -63,8 +74,39 @@ const steps = ${this.secretSteps};`;
 
 	public solution: string = ``;
 
-	private getAnswer(grid: Grid): Grid {
-		return grid;
+	private getAnswer(input: string, steps: number): string {
+		let grid = stringToGrid(input);
+
+		for (let i = 0; i < steps; i++) {
+			const pastGrid = structuredClone(grid);
+
+			pastGrid.forEach((row, cellY) => {
+				row.forEach((cell, cellX) => {
+					let liveNeighbors = 0;
+
+					MOORE_NEIGHBORHOOD.forEach(([offsetX, offsetY]) => {
+						const neighborRow = pastGrid[cellY + offsetY];
+						if (neighborRow === undefined) return;
+
+						const neighborCell = neighborRow[cellX + offsetX];
+
+						if (neighborCell === "alive") liveNeighbors++;
+					});
+
+					if (cell === "dead") {
+						if (liveNeighbors === 3) {
+							grid[cellY][cellX] = "alive";
+						}
+					} else {
+						if (liveNeighbors < 2 || liveNeighbors > 3) {
+							grid[cellY][cellX] = "dead";
+						}
+					}
+				});
+			});
+		}
+
+		return gridToString(grid);
 	}
 
 	public test(userCode: string): TestResult {
@@ -84,14 +126,14 @@ const steps = ${this.secretSteps};`;
 			};
 		}
 
-		if (!Array.isArray(res)) {
+		if (typeof res !== "string") {
 			return {
 				passed: false,
-				msg: `Expected an \`Array\` but got type \`${typeof res}\` instead.`,
+				msg: `Expected a string but got type \`${typeof res}\` instead.`,
 			};
 		}
 
-		const answer = this.getAnswer(stringToGrid(this.input));
+		const answer = this.getAnswer(this.input, this.steps);
 		if (res !== answer) {
 			return {
 				passed: false,
@@ -100,7 +142,7 @@ const steps = ${this.secretSteps};`;
 		}
 
 		const secretRes = runSnippet(userCode, this.secretInString);
-		const secretAnswer = this.getAnswer(stringToGrid(this.secretInput));
+		const secretAnswer = this.getAnswer(this.secretInput, this.secretSteps);
 		if (secretRes !== secretAnswer) {
 			return {
 				passed: false,
