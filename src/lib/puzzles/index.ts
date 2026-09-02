@@ -65,7 +65,7 @@ export interface Puzzle {
 }
 
 export function slugify(str: string): string {
-	return str.toLowerCase().replaceAll(" ", "_");
+	return str.toLowerCase().replaceAll(" ", "_").replaceAll("'", "");
 }
 
 import { AddOnePuzzle } from "./addOne";
@@ -74,6 +74,7 @@ import { CaesarPuzzle } from "./caesar";
 import { HeadcountPuzzle } from "./headcount";
 import { ScoreboardPuzzle } from "./scoreboard";
 import { UndoBufferPuzzle } from "./undoBuffer";
+import { ConwayPuzzle } from "./conway";
 
 export const PUZZLES: Puzzle[] = [
 	new AddOnePuzzle(),
@@ -82,4 +83,5 @@ export const PUZZLES: Puzzle[] = [
 	new CaesarPuzzle(),
 	new UndoBufferPuzzle(),
 	new HeadcountPuzzle(),
+	new ConwayPuzzle(),
 ] as const;
