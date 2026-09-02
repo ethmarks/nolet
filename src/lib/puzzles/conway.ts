@@ -147,7 +147,61 @@ return simulate(input, steps);
 <p>Good luck!</p>
 `;
 
-	public solution: string = ``;
+	public solution: string = js`
+const MOORE_NEIGHBORHOOD = [
+	[-1, -1], [0, -1], [1, -1],
+	[-1,  0],          [1,  0],
+	[-1,  1], [0,  1], [1,  1],
+];
+
+function getNeighbors(cells, index = 0) {
+	const { x, y } = cells[index];
+
+	const thisNeighbors = MOORE_NEIGHBORHOOD.map(
+		([offsetX, offsetY]) => {
+			const nx = x + offsetX;
+			const ny = y + offsetY;
+			// to avoid the weirdness of passing by reference
+			const key = nx + "," + ny;
+
+			return key;
+		},
+	);
+
+	if (index === cells.length - 1) return thisNeighbors;
+
+	const otherNeighbors = getNeighbors(cells, index + 1);
+	return [...thisNeighbors, ...otherNeighbors];
+}
+
+function simulate(cells, steps, iteration = 1) {
+	const neighbors = getNeighbors(cells);
+
+	const neighborCounts = neighbors.reduce((acc, key) => (
+		{ ...acc, [key]: (acc[key] ?? 0) + 1 }
+	), {});
+
+	const nextCells = Object.entries(neighborCounts).reduce(
+		(acc, [key, count]) => {
+			const [x, y] = key.split(",").map(Number);
+			const alive = cells.some((c) => c.x === x && c.y === y);
+
+			if (count === 3 || (alive && count === 2)) {
+				return [...acc, { x, y }];
+			}
+
+			return acc;
+		},
+		[],
+	);
+
+	if (iteration === steps) return nextCells;
+
+	return simulate(nextCells, steps, iteration + 1);
+}
+
+return simulate(input, steps);
+`;
 
 	private getAnswer(cells: Cell[], steps: number): Cell[] {
 		for (let i = 0; i < steps; i++) {
