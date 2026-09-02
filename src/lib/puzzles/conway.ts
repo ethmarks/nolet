@@ -90,7 +90,7 @@ export class ConwayPuzzle implements Puzzle {
 // living cells on the grid.
 const input = ${JSON.stringify(stringToCells(this.input))};
 /**
-This is what the grid looks like visually:
+This is what the initial grid looks like visually:
 ${cellsToString(stringToCells(this.input))}
 **/
 
@@ -103,28 +103,28 @@ const steps = ${this.secretSteps};`;
 	public initialCode: string = js`
 const MOORE_NEIGHBORHOOD = [
 	[-1, -1], [0, -1], [1, -1],
-	[-1, 0],           [1, 0],
-	[-1, 1],  [0, 1],  [1, 1],
+	[-1,  0],          [1,  0],
+	[-1,  1], [0,  1], [1,  1],
 ];
 
 function simulate(cells, steps) {
 	for (let i = 0; i < steps; i++) {
-		const neighborCounts = new Map();
+		const neighborCounts = {};
 
-		cells.forEach(({ x, y }) => {
-			MOORE_NEIGHBORHOOD.forEach(([offsetX, offsetY]) => {
+		for (const { x, y } of cells) {
+			for (const [offsetX, offsetY] of MOORE_NEIGHBORHOOD) {
 				const nx = x + offsetX;
 				const ny = y + offsetY;
 				// to avoid the weirdness of passing by reference
 				const key = nx + "," + ny;
 
-				neighborCounts.set(key, (neighborCounts.get(key) ?? 0) + 1);
-			});
-		});
+				neighborCounts[key] = (neighborCounts[key] ?? 0) + 1;
+			}
+		}
 
 		const nextCells = [];
 
-		for (const [key, count] of neighborCounts) {
+		for (const [key, count] of Object.entries(neighborCounts)) {
 			const [x, y] = key.split(",").map(Number);
 			const alive = cells.some((c) => c.x === x && c.y === y);
 
@@ -139,7 +139,7 @@ function simulate(cells, steps) {
 	return cells;
 }
 
-return simulate(input, steps)
+return simulate(input, steps);
 `;
 
 	public descriptionHTML: string = `
@@ -217,7 +217,7 @@ return simulate(input, steps)
 		if (res.length !== answer.length) {
 			return {
 				passed: false,
-				msg: `Expected ${answer.length} living cells, but only got ${res.length}.`,
+				msg: `Expected ${answer.length} living cells, but got ${res.length}.`,
 			};
 		}
 
