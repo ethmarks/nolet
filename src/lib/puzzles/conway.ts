@@ -1,7 +1,23 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
+/** Doesn't do anything, just makes my IDE do syntax highlighting */
+const js = (strings: TemplateStringsArray): string => strings[0];
+
 type Cell = { x: number; y: number };
+
+function isCellArray(value: unknown): value is Cell[] {
+	return (
+		Array.isArray(value) &&
+		(value as Cell[]).every(
+			(p) =>
+				typeof p === "object" &&
+				p !== null &&
+				typeof p.x === "number" &&
+				typeof p.y === "number",
+		)
+	);
+}
 
 // prettier-ignore
 const MOORE_NEIGHBORHOOD = [
@@ -70,13 +86,61 @@ export class ConwayPuzzle implements Puzzle {
 	private secretSteps = 5;
 
 	public inputString: string = `
-const input = \`\n${cellsToString(stringToCells(this.input))}\n\`;
+// The input is an array of coordinates for all of the
+// living cells on the grid.
+const input = ${JSON.stringify(stringToCells(this.input))};
+/**
+This is what the grid looks like visually:
+${cellsToString(stringToCells(this.input))}
+**/
+
 const steps = ${this.steps};`;
+
 	private secretInString = `
-const input = \`${this.secretInput}\`;
+const input = ${JSON.stringify(stringToCells(this.secretInput))};
 const steps = ${this.secretSteps};`;
 
-	public initialCode: string = ``;
+	public initialCode: string = js`
+const MOORE_NEIGHBORHOOD = [
+	[-1, -1], [0, -1], [1, -1],
+	[-1, 0],           [1, 0],
+	[-1, 1],  [0, 1],  [1, 1],
+];
+
+function simulate(cells, steps) {
+	for (let i = 0; i < steps; i++) {
+		const neighborCounts = new Map();
+
+		cells.forEach(({ x, y }) => {
+			MOORE_NEIGHBORHOOD.forEach(([offsetX, offsetY]) => {
+				const nx = x + offsetX;
+				const ny = y + offsetY;
+				// to avoid the weirdness of passing by reference
+				const key = nx + "," + ny;
+
+				neighborCounts.set(key, (neighborCounts.get(key) ?? 0) + 1);
+			});
+		});
+
+		const nextCells = [];
+
+		for (const [key, count] of neighborCounts) {
+			const [x, y] = key.split(",").map(Number);
+			const alive = cells.some((c) => c.x === x && c.y === y);
+
+			if (count === 3 || (alive && count === 2)) {
+				nextCells.push({ x, y });
+			}
+		}
+
+		cells = nextCells;
+	}
+
+	return cells;
+}
+
+return simulate(input, steps)
+`;
 
 	public descriptionHTML: string = `
 <p>A friend who you do <em>not</em> want to take hang gliding just overheard you discussing your upcoming hang gliding trip. Thinking quickly, you said that you were actually talking about <a href="https://en.wikipedia.org/wiki/Glider_(Conway%27s_Game_of_Life)">glider patterns</a> in your implementation of Conway's Game of Life. To avoid getting caught in your lie, you now have to quickly make a Game of Life implementation.</p>
@@ -85,9 +149,7 @@ const steps = ${this.secretSteps};`;
 
 	public solution: string = ``;
 
-	private getAnswer(input: string, steps: number): string {
-		let cells = stringToCells(input);
-
+	private getAnswer(cells: Cell[], steps: number): Cell[] {
 		for (let i = 0; i < steps; i++) {
 			const neighborCounts = new Map<string, number>();
 
@@ -116,7 +178,7 @@ const steps = ${this.secretSteps};`;
 			cells = nextCells;
 		}
 
-		return cellsToString(cells);
+		return cells;
 	}
 
 	public test(userCode: string): TestResult {
@@ -136,24 +198,45 @@ const steps = ${this.secretSteps};`;
 			};
 		}
 
-		if (typeof res !== "string") {
+		if (!Array.isArray(res)) {
 			return {
 				passed: false,
-				msg: `Expected a string but got type \`${typeof res}\` instead.`,
+				msg: `Expected an Array but got type \`${typeof res}\` instead.`,
 			};
 		}
 
-		const answer = this.getAnswer(this.input, this.steps);
-		if (res !== answer) {
+		if (!isCellArray(res)) {
 			return {
 				passed: false,
-				msg: `Expected "${answer}" but got "${res}" instead.`,
+				msg: `Your array is malformed. The expected data type is \`{ x: number; y: number }[]\``,
+			};
+		}
+
+		const answer = this.getAnswer(stringToCells(this.input), this.steps);
+
+		if (res.length !== answer.length) {
+			return {
+				passed: false,
+				msg: `Expected ${answer.length} living cells, but only got ${res.length}.`,
+			};
+		}
+
+		if (cellsToString(res) !== cellsToString(answer)) {
+			return {
+				passed: false,
+				msg: `You have the correct number of living cells, but they're in the wrong positions`,
 			};
 		}
 
 		const secretRes = runSnippet(userCode, this.secretInString);
-		const secretAnswer = this.getAnswer(this.secretInput, this.secretSteps);
-		if (secretRes !== secretAnswer) {
+		const secretAnswer = this.getAnswer(
+			stringToCells(this.secretInput),
+			this.secretSteps,
+		);
+		if (
+			!isCellArray(secretRes) ||
+			cellsToString(secretRes) !== cellsToString(secretAnswer)
+		) {
 			return {
 				passed: false,
 				msg: "Failed secret anti-hardcoding check. You need to generalize your logic.",
@@ -162,7 +245,7 @@ const steps = ${this.secretSteps};`;
 
 		return {
 			passed: true,
-			msg: `Expected "${answer}" and got "${res}".`,
+			msg: `All cells are correct!`,
 		};
 	}
 }
