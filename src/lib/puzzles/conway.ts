@@ -1,8 +1,7 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
 import type { Puzzle, TestResult } from ".";
 
-type Cell = "alive" | "dead";
-type Grid = Cell[][];
+type Cell = { x: number; y: number };
 
 // prettier-ignore
 const MOORE_NEIGHBORHOOD = [
@@ -11,27 +10,39 @@ const MOORE_NEIGHBORHOOD = [
 	[-1, 1],  [0, 1],  [1, 1],
 ];
 
-function gridToString(input: Grid): string {
-	return input
+function cellsToString(cells: Cell[]): string {
+	if (cells.length === 0) return "";
+
+	// pad each dimension by 1 because the spacing looks nice
+	const minY = Math.min(...cells.map(({ y }) => y)) - 1;
+	const maxY = Math.max(...cells.map(({ y }) => y)) + 1;
+	const minX = Math.min(...cells.map(({ x }) => x)) - 1;
+	const maxX = Math.max(...cells.map(({ x }) => x)) + 1;
+
+	const grid = Array.from({ length: maxY - minY + 1 }).map((_, y) =>
+		Array.from({ length: maxX - minX + 1 }).map((_, x) =>
+			cells.some((cell) => cell.x === x + minX && cell.y === y + minY),
+		),
+	);
+
+	return grid
 		.map((row) =>
-			row.reduce<string>(
-				(acc, cell) => (acc += (cell === "alive" ? "#" : ".") + " "),
-				"",
-			),
+			row.reduce<string>((acc, cell) => (acc += (cell ? "#" : ".") + " "), ""),
 		)
 		.join("\n");
 }
 
-function stringToGrid(input: string): Grid {
+function stringToCells(input: string): Cell[] {
 	return input
 		.split("\n")
-		.map((row: string) =>
+		.filter((row) => row.trim() !== "")
+		.flatMap((row, y) =>
 			row
 				.split("")
 				.filter((char) => char === "#" || char === ".")
-				.map((cell) => (cell === "#" ? "alive" : "dead")),
-		)
-		.filter((row) => row.length > 0);
+				.map((cell, x) => (cell === "#" ? { x, y } : undefined))
+				.filter((cell) => cell !== undefined),
+		);
 }
 
 export class ConwayPuzzle implements Puzzle {
@@ -52,14 +63,14 @@ export class ConwayPuzzle implements Puzzle {
 .###.#.
 .#.....
 ....##.
-..## #.
+..##.#.
 .#.#.#.
 .......
 `;
 	private secretSteps = 5;
 
 	public inputString: string = `
-const input = \`\n${gridToString(stringToGrid(this.input))}\n\`;
+const input = \`\n${cellsToString(stringToCells(this.input))}\n\`;
 const steps = ${this.steps};`;
 	private secretInString = `
 const input = \`${this.secretInput}\`;
@@ -75,38 +86,37 @@ const steps = ${this.secretSteps};`;
 	public solution: string = ``;
 
 	private getAnswer(input: string, steps: number): string {
-		let grid = stringToGrid(input);
+		let cells = stringToCells(input);
 
 		for (let i = 0; i < steps; i++) {
-			const pastGrid = structuredClone(grid);
+			const neighborCounts = new Map<string, number>();
 
-			pastGrid.forEach((row, cellY) => {
-				row.forEach((cell, cellX) => {
-					let liveNeighbors = 0;
+			cells.forEach(({ x, y }) => {
+				MOORE_NEIGHBORHOOD.forEach(([offsetX, offsetY]) => {
+					const nx = x + offsetX;
+					const ny = y + offsetY;
+					// to avoid the weirdness of passing by reference
+					const key = `${nx},${ny}`;
 
-					MOORE_NEIGHBORHOOD.forEach(([offsetX, offsetY]) => {
-						const neighborRow = pastGrid[cellY + offsetY];
-						if (neighborRow === undefined) return;
-
-						const neighborCell = neighborRow[cellX + offsetX];
-
-						if (neighborCell === "alive") liveNeighbors++;
-					});
-
-					if (cell === "dead") {
-						if (liveNeighbors === 3) {
-							grid[cellY][cellX] = "alive";
-						}
-					} else {
-						if (liveNeighbors < 2 || liveNeighbors > 3) {
-							grid[cellY][cellX] = "dead";
-						}
-					}
+					neighborCounts.set(key, (neighborCounts.get(key) ?? 0) + 1);
 				});
 			});
+
+			const nextCells: Cell[] = [];
+
+			for (const [key, count] of neighborCounts) {
+				const [x, y] = key.split(",").map(Number);
+				const alive = cells.some((c) => c.x === x && c.y === y);
+
+				if (count === 3 || (alive && count === 2)) {
+					nextCells.push({ x, y });
+				}
+			}
+
+			cells = nextCells;
 		}
 
-		return gridToString(grid);
+		return cellsToString(cells);
 	}
 
 	public test(userCode: string): TestResult {
