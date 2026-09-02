@@ -64,26 +64,24 @@ function stringToCells(input: string): Cell[] {
 export class ConwayPuzzle implements Puzzle {
 	public name: string = "Conway's Game of Life";
 
+	// https://commons.wikimedia.org/wiki/File:Game_of_life_infinite2.svg
 	private input = `
-.......
-.###.#.
-.#.....
-....##.
-..##.#.
-.#.#.#.
-.......
+###.#
+#....
+...##
+.##.#
+#.#.#
 `;
-	private steps = 20;
+	private steps = 50;
+
+	// I-heptomino
 	private secretInput = `
-.......
-.###.#.
-.#.....
-....##.
-..##.#.
-.#.#.#.
-.......
+..##
+.##.
+.#..
+##..
 `;
-	private secretSteps = 5;
+	private secretSteps = 20;
 
 	public inputString: string = `
 // The input is an array of coordinates for all of the
