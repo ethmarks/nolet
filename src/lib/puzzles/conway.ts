@@ -87,10 +87,11 @@ export class ConwayPuzzle implements Puzzle {
 // The input is an array of coordinates for all of the
 // living cells on the grid.
 const input = ${JSON.stringify(stringToCells(this.input))};
-/**
-This is what the initial grid looks like visually:
-${cellsToString(stringToCells(this.input))}
-**/
+// This is what the initial grid looks like visually:
+${cellsToString(stringToCells(this.input))
+	.split("\n")
+	.map((l) => "// " + l)
+	.join("\n")}
 
 const steps = ${this.steps};`;
 
