@@ -173,7 +173,7 @@ function getNeighbors(cells, index = 0) {
 	return [...thisNeighbors, ...otherNeighbors];
 }
 
-function simulate(cells, steps, iteration = 1) {
+function simulate(cells, steps) {
 	const neighbors = getNeighbors(cells);
 
 	const neighborCounts = neighbors.reduce((acc, key) => (
@@ -194,9 +194,9 @@ function simulate(cells, steps, iteration = 1) {
 		[],
 	);
 
-	if (iteration === steps) return nextCells;
+	if (steps === 1) return nextCells;
 
-	return simulate(nextCells, steps, iteration + 1);
+	return simulate(nextCells, steps - 1);
 }
 
 return simulate(input, steps);
