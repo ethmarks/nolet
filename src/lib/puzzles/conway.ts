@@ -153,30 +153,18 @@ const MOORE_NEIGHBORHOOD = [
 	[-1,  1], [0,  1], [1,  1],
 ];
 
-function getNeighbors(cells, index = 0) {
-	const { x, y } = cells[index];
-
-	const thisNeighbors = MOORE_NEIGHBORHOOD.map(
-		([offsetX, offsetY]) => {
+function simulate(cells, steps) {
+	const neighborCounts = cells
+	.flatMap(({ x, y }) =>
+		MOORE_NEIGHBORHOOD.map(([offsetX, offsetY]) => {
 			const nx = x + offsetX;
 			const ny = y + offsetY;
 			// to avoid the weirdness of passing by reference
 			const key = nx + "," + ny;
 
 			return key;
-		},
-	);
-
-	if (index === cells.length - 1) return thisNeighbors;
-
-	const otherNeighbors = getNeighbors(cells, index + 1);
-	return [...thisNeighbors, ...otherNeighbors];
-}
-
-function simulate(cells, steps) {
-	const neighbors = getNeighbors(cells);
-
-	const neighborCounts = neighbors.reduce((acc, key) => (
+  }))
+	.reduce((acc, key) => (
 		{ ...acc, [key]: (acc[key] ?? 0) + 1 }
 	), {});
 
