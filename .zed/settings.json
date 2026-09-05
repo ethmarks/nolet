@@ -1,0 +1,5 @@
+{
+	// 80 char guide is what most of the code uses
+	// 62 char guide is for the puzzle starter and solution code
+	"wrap_guides": [62, 80],
+}
