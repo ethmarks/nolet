@@ -97,14 +97,6 @@
 
 	<hr />
 
-	<Output
-		{userCode}
-		test={(code: string) => puzzle.test(code)}
-		updateStatus={(s: OutputStatus) => (outputStatus = s)}
-		registerRunLogic={(func: () => void) => (runLogic = func)}
-		registerRunLint={(func: () => void) => (runLint = func)}
-	/>
-
 	{#if inputString}
 		<Editor initialValue={inputString} readOnly={true} />
 	{/if}
@@ -118,6 +110,14 @@
 			}
 		}}
 		readOnly={false}
+	/>
+
+	<Output
+		{userCode}
+		test={(code: string) => puzzle.test(code)}
+		updateStatus={(s: OutputStatus) => (outputStatus = s)}
+		registerRunLogic={(func: () => void) => (runLogic = func)}
+		registerRunLint={(func: () => void) => (runLint = func)}
 	/>
 
 	<button
