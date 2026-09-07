@@ -1,10 +1,11 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 type InputType = number[];
 
 export class ArraySummingPuzzle implements Puzzle {
 	public name: string = "Array Summing";
+	public difficulty: Difficulty = "Easy";
 
 	private input: InputType = [1, 2, 3, 4, 5];
 	private secretInput: InputType = [9, 1, 5, 1, 7, 3, 10];

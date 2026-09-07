@@ -1,8 +1,9 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 export class AddOnePuzzle implements Puzzle {
 	public name: string = "Add One";
+	public difficulty: Difficulty = "Easy";
 
 	public initialCode: string = `
 // Edit me!

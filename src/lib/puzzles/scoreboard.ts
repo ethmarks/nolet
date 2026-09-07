@@ -1,5 +1,5 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 type Player = { name: string; team: number; score: number };
 
@@ -20,6 +20,7 @@ function isPlayers(value: unknown): value is Player[] {
 
 export class ScoreboardPuzzle implements Puzzle {
 	public name: string = "Scoreboard";
+	public difficulty: Difficulty = "Medium";
 
 	private players: Player[] = [
 		{ name: "Algernon", team: 1, score: 6 },

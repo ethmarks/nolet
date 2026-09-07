@@ -1,5 +1,5 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 type Department = {
 	name: string;
@@ -268,6 +268,7 @@ function getSecretDepartments(): Department[] {
 
 export class HeadcountPuzzle implements Puzzle {
 	public name: string = "Headcount";
+	public difficulty: Difficulty = "Medium";
 
 	private input: Department[] = getDepartments();
 	private secretInput: Department[] = getSecretDepartments();

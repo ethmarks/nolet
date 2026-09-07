@@ -1,5 +1,5 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 interface InputType {
 	text: string;
@@ -12,6 +12,7 @@ const alphabet = Array.from({ length: 26 }, (_, i) =>
 
 export class CaesarPuzzle implements Puzzle {
 	public name: string = "Caesar Cipher";
+	public difficulty: Difficulty = "Medium";
 
 	private input: InputType = {
 		text: this.getAnswer({

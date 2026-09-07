@@ -1,5 +1,5 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 /** Doesn't do anything, just makes my IDE do syntax highlighting */
 const js = (strings: TemplateStringsArray): string => strings[0];
@@ -63,6 +63,7 @@ function stringToCells(input: string): Cell[] {
 
 export class ConwayPuzzle implements Puzzle {
 	public name: string = "Conway's Game of Life";
+	public difficulty: Difficulty = "Hard";
 
 	// https://commons.wikimedia.org/wiki/File:Game_of_life_infinite2.svg
 	private input = `

@@ -3,6 +3,8 @@ export interface TestResult {
 	msg: string;
 }
 
+export type Difficulty = "Easy" | "Medium" | "Hard";
+
 export interface Puzzle {
 	/**
 	 * The name of the level.
@@ -62,6 +64,11 @@ export interface Puzzle {
 	 * that the user didn't just hardcode the answer.
 	 */
 	test: (userCode: string) => TestResult;
+
+	/**
+	 * How difficult the puzzle is.
+	 */
+	difficulty: Difficulty;
 }
 
 export function slugify(str: string): string {

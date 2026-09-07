@@ -1,5 +1,5 @@
 import { QuickJSError, runSnippet } from "$lib/runSnippet";
-import type { Puzzle, TestResult } from ".";
+import type { Puzzle, Difficulty, TestResult } from ".";
 
 // The quote is from "Do Not Go Gentle into That Good Night" by Dylan Thomas
 function getBuffer(str: string): string[] {
@@ -19,6 +19,7 @@ function getBuffer(str: string): string[] {
 
 export class UndoBufferPuzzle implements Puzzle {
 	public name: string = "Undo Buffer";
+	public difficulty: Difficulty = "Medium";
 
 	private input: string[] = getBuffer(
 		"Do# not g#o## gentle in#to tha#t g#ood #night#",

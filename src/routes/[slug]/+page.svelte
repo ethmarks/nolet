@@ -89,7 +89,14 @@
 </svelte:head>
 
 <main>
-	<h2>{puzzle.name}</h2>
+	<h2>
+		{puzzle.name} -
+		<span
+			class="difficulty"
+			data-difficulty={puzzle.difficulty.toLowerCase()}
+			>{puzzle.difficulty}</span
+		>
+	</h2>
 
 	<div class="description">
 		{@html description}
@@ -165,6 +172,22 @@
 
 		&[open] :global(:last-child) {
 			margin-bottom: 0.7rem;
+		}
+	}
+
+	.difficulty {
+		// Colors sourced from https://masters-dco.fandom.com/wiki/Colors
+		// which was one of the first search results for "easy medium hard
+		// color", because I'm lazy.
+
+		&[data-difficulty="easy"] {
+			color: #49a35e;
+		}
+		&[data-difficulty="medium"] {
+			color: #fcb272;
+		}
+		&[data-difficulty="hard"] {
+			color: #b04f4f;
 		}
 	}
 </style>
