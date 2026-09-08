@@ -7,7 +7,7 @@ No Let is a JavaScript puzzle site where you have to use pure functional
 programming, which means that you aren't allowed to use `let` or anything else
 with mutable state.
 
-[![No Let homepage](./.github/nolet_screenshot.png)](https://ethmarks.github.io/nolet/)
+[![No Let homepage](./.github/homepage_screenshot.png)](https://ethmarks.github.io/nolet/)
 
 ## Quickstart
 
@@ -22,8 +22,8 @@ Just visit <https://ethmarks.github.io/nolet/>.
 - **Sandboxed JS Execution**: Uses
   [QuickJS](https://github.com/justjake/quickjs-emscripten) to execute the
   user's code in a WASM VM context and read the result.
-- **5 Puzzles**: Has 5 complete puzzles. Each puzzle has starter code, input
-  data, robust logic tests, and suggested solutions.
+- **7 Puzzles**: Has 7 complete puzzles, ranging from easy to hard. Each puzzle
+  has starter code, input data, robust logic tests, and suggested solutions.
 - **High-performance Code Editor**: Uses
   [Prism code editor](https://prism-code-editor.netlify.app/) to provide code
   autocomplete and syntax highlighting with only 3.49kb (gzipped) of added
@@ -36,6 +36,8 @@ Just visit <https://ethmarks.github.io/nolet/>.
   zero server calls, for near-instant feedback.
 
 ## How it Works
+
+![A No Let puzzle, with the starter code](./.github/puzzle_screenshot.png)
 
 When the user presses "Run" after typing out their code in the editor, the
 following steps are executed in order:
@@ -50,6 +52,8 @@ following steps are executed in order:
    (yay!).
 
 ### Logic Tests
+
+![Confetti being released after a puzzle was completed](./.github/output_screenshot.png)
 
 The logic tests ensure that the user's code returns the correct value and that
 its logic is correct. Each puzzle has different logic tests depending on what
@@ -80,6 +84,8 @@ by hardcoding the answer rather than actually writing logic to process the
 input. The logic test will fail in this case.
 
 ### Linter
+
+![Linter showing 9 violations](./.github/linter_screenshot.png)
 
 After the user code is parsed into an AST with Acorn, the nodes are traversed
 with Acorn's `acorn-walk` module. If the node is of specific types, such as
