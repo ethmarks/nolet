@@ -6,6 +6,8 @@
 	import "$lib/assets/dev.css";
 
 	let { children } = $props();
+
+	let path = $derived(page.url.pathname.substring(base.length + 1));
 </script>
 
 <svelte:head>
@@ -31,14 +33,12 @@
 		<nav>
 			<ol>
 				{#each PUZZLES as puzzle}
-					<li>
-						<a
-							href="{base}/{slugify(puzzle.name)}"
-							class={page.url.pathname.substring(
-								base.length + 1,
-							) === slugify(puzzle.name)
-								? "current"
-								: ""}>{puzzle.name}</a
+					<li
+						aria-current={path === slugify(puzzle.name)
+							? "page"
+							: undefined}
+					>
+						<a href="{base}/{slugify(puzzle.name)}">{puzzle.name}</a
 						>
 					</li>
 				{/each}
@@ -74,9 +74,7 @@
 		margin: 0 0.25em;
 	}
 
-	aside nav {
-		.current {
-			font-weight: bold;
-		}
+	aside nav li[aria-current="page"] {
+		font-weight: bold;
 	}
 </style>
